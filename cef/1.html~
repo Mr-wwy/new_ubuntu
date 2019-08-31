@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function myFunction3(){
+	document.getElementById("demo").innerHTML="JavaScript 能够改变 HTML 内容。";
+}
+</script>
+
+<body>
+<meta charset="UTF-8">
+<h2>JavaScript 能做什么</h2>
+
+<p id="demo">JavaScript 能够改变 HTML 内容。</p>
+
+<script>
+function myFunction(){
+	document.getElementById('demo').innerHTML='Hello Web';
+}
+
+function myFunction2(){
+	document.getElementById("demo").innerHTML="我又来了 JavaScript";
+
+function getrandom(int min, int max){
+	return Math.floor(Math.random() * (max-min)) + min;
+}
+	document.getElementById('demo').innerHTML=getrandom(1,10);
+}
+</script>
+
+<button onmouseover='myFunction()'>点击我！</button>
+<input type="button" value="试一试" onclick="myFunction2()"/>
+<input type="button" value="还原" onclick="myFunction3()"/>
+<button onclick="myFunction4()">看看速度</button>
+
+<input type='button' value='外部js' onclick='myFunction5()'/>
+<input type='button' value='随机数' onclick='getrandom(1,10)'/>
+
+<script src='./myJavaScript.js'></script>
+<script src='./random.js'></script>
+<script>
+function myFunction4(){
+	//document.getElementById('demo').innerHTML="速度慢了吗？";
+	//window.alert("wwww");
+	console.log("www");
+}
+</script>
+
+</body>
+</html>
