@@ -1,0 +1,128 @@
+
+
+QTextEdit类
+ 
+	关于QTextEdit，Qt5对Qt4的做了一些小的改动，看上去很多方法都发生了变化，但万变不离其中。如：槽函数setFontFamily(const QFont&)变为setFontFamily(const QString & fontFamily)，alignLeft()、alignCenter()、alignJustify()、alignRight()也都不见了，取而代之的是setAlignment(Qt::Alignment a)。这些改变让QTextEdit也越来越简洁，越来越好用。。。
+
+	下面是我的一个简单的测试demo。
+
+	Qt之QTextEdit
+
+	1、设置字体粗细
+
+	setFontWeight(int weight)
+
+	enum QFont::Weight可取以下各值：
+		QFont::Light	25
+		QFont::Normal	50
+		QFont::DemiBold	63
+		QFont::Bold		75
+		QFont::Black	87
+
+	2、设置字体斜体
+
+	setFontItalic(bool italic)
+
+		true表示斜体，false为非斜体。
+
+	3、设置下划线
+
+	setFontUnderline(bool underline)
+
+		true表示有下划线，false无。
+
+	4、设置字体类型
+
+	setFontFamily(const QString & fontFamily)
+
+
+	5、设置字体大小
+
+	setFontPointSize(qreal s)
+
+
+	6、设置文本色
+
+	setTextColor(const QColor & c)
+
+
+	7、设置文本背景色
+
+	setTextBackgroundColor(const QColor & c)
+
+
+	8、设置对齐方式
+
+	setAlignment(Qt::Alignment a)
+
+	Qt::Alignment取值如下：
+		Qt之QTextEdit
+		Qt::AlignLeft左对齐、Qt::AlignRigh右对齐、Qt::AlignJustify两端对齐、Qt::AlignCenter居中对齐
+
+		好了，方法太多，而且很简单，就不一一列举了，下面看主要的：
+
+	9、插入图片：	ui->textEdit->append("<img src=:/w/Face/0.bmp>");
+
+	void Widget::insertImage()
+	{
+		    QImage image(":/Images/qq");
+		    if (image.isNull()) 
+		            return;
+
+		    int width = text_edit->viewport()->width();
+		    int height = text_edit->viewport()->height();
+		    if (image.width() > width || image.height() > height) {
+		            image = image.scaled(30, 30, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+		    }
+
+		    QTextCursor cursor = text_edit->textCursor();
+		    QTextDocument *document = text_edit->document();
+		    cursor.movePosition(QTextCursor::End);
+
+		    
+		    document->addResource(QTextDocument::ImageResource, QUrl(":/Images/qq"),  QVariant(image));
+
+		    //插入图像，使用QTextCursor API文档：
+		    QTextImageFormat image_format;
+		    image_format.setName(":/Images/qq");
+		    cursor.insertImage(image_format);
+	}
+
+		或者，使用HTML的img标记Qt之QTextEdit
+
+	10、搜索匹配文本进行高亮
+
+	void Widget::search()
+	{
+		QString search_text = search_line_edit->text();
+		if (search_text.trimmed().isEmpty()) {
+		    QMessageBox::information(this, tr("Empty search field"), tr("The search field is empty."));
+		} else {
+		    QTextDocument *document = text_edit->document();
+		    bool found = false;
+		    QTextCursor highlight_cursor(document);
+		    QTextCursor cursor(document);
+
+		    //开始
+		    cursor.beginEditBlock();
+
+		    QTextCharFormat color_format(highlight_cursor.charFormat());
+		    color_format.setForeground(Qt::red);
+		    while (!highlight_cursor.isNull() && !highlight_cursor.atEnd()) {
+
+		        //查找指定的文本，匹配整个单词
+		        highlight_cursor = document->find(search_text, highlight_cursor, QTextDocument::FindWholeWords);
+		        if (!highlight_cursor.isNull()) {
+		       if(!found)
+		           found = true;
+		                highlight_cursor.mergeCharFormat(color_format);
+		        }
+		    }
+		    cursor.endEditBlock();
+		    //结束
+
+		    if (found == false) {
+		        QMessageBox::information(this, tr("Word not found"), tr("Sorry,the word cannot be found."));
+		    }
+		}
+	}

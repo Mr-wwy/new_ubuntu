@@ -1,0 +1,148 @@
+roscore 
+rosrun 
+roslaunch
+roswtf
+
+catkin_make --pkg package_name	编译指定功能包
+
+roscd 
+rospack find ~		查看ros包的位置
+rospack depends1 ~  查看ros包的依赖
+
+rqt_graph 			查看节点之间的通信关系
+rqt_console 		查看节点的输出信息
+rqt_logger_level	允许我们修改节点运行时输出信息的日志等级
+
+
+rosnode list
+rosnode cleanup	   清除节点
+rosnode info /~	   查看节点信息
+
+
+rostopic list
+rostopic info /~   查看主题信息
+rostopic echo /~   查看主题发布的消息
+rostopic type /~   查看主题的消息类型
+rostopic pub /turtle1/cmd_vel geometry_msgs/Twist -r 1 -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 2.0]'
+
+rosmsg show ~	   查看消息结构
+rossrv show ~	   查看服务内容
+
+rosbag record -a   录制所有话题的消息，录制完Ctrl+c退出会生成一个.bag文件
+rosbag record /~   录制相应主题的消息, 可接多个主题  （-o ~ 生成～.bag文件）
+rosbag info ~	   查看录制的消息
+rosbag play ~	   消息回放
+
+launch 文件添加gdb调试 launch-prefix="xterm -e gdb --args"
+
+ros::NodeHandle n;
+ros::Publisher pub = n.advertise<>();
+ros::Subscriber sub = n.subscribe();
+pub.publish();
+
+
+rosrun tf view_frames  //可视化的调试工具，可以生成pdf文件，来显示整棵tf树的信息。
+evince frames.pdf
+
+tf_echo    //查看指定参考系之间的变换关系。(tf_echo <source_frame> <target_frame>)
+tf_monitor  //打印tf树中的所有参考系信息，通过输入参数来查看指定参考系之间的信息。
+(rosrun tf tf_monitor)
+
+
+sudo jstest /dev/~~
+
+
+
+roslaunch husky_gazebo husky_playpen.launch
+roslaunch husky_viz view_robot.launch
+roslaunch husky_navigation move_base_mapless_demo.launch
+
+
+给定一个欧拉旋转(X, Y, Z)（即分别绕x轴、y轴和z轴旋转X、Y、Z度），则对应的四元数为：	
+
+ros中：
+	#include <tf/transform_broadcaster.h>
+
+	tf::Quaternion q;
+	q.setEuler(x, y, z);  //使用欧拉数设置四元数
+	w = q.w();
+	x = q.x();
+	y = q.y();
+	z = q.z();
+	
+另类：
+	Quaternion[0]    = Cos(x/2) * Cos(y/2) * Cos(z/2) + Sin(x/2) * Sin(y/2) * Sin(z/2);  w
+	Quaternion[1]    = Sin(x/2) * Cos(y/2) * Cos(z/2) - Cos(x/2) * Sin(y/2) * Sin(z/2);  x
+	Quaternion[2]    = Cos(x/2) * Sin(y/2) * Cos(z/2) + Sin(x/2) * Cos(y/2) * Sin(z/2);  y
+	Quaternion[3]    = Cos(x/2) * Cos(y/2) * Sin(z/2) - Sin(x/2) * Sin(y/2) * Cos(z/2);  z
+	
+	
+	
+	
+	
+	2台电脑间的ros通信
+	
+	
+	这里假设我们有两个电脑：电脑 A 为主机端，电脑 B 为控制端。最终要实现在 A 电脑上运行roscore，并且运行 Turtlesim 程序，然后在 B 电脑上运行键盘控制程序，控制 Turtlesim 小乌龟移动。
+
+1. 查看电脑A和电脑B的 IP 和 Hostname
+查看IP，在控制台输入：	$ ifconfig
+
+如果电脑连接的时有线网，则显示结果中，etho 部分的 inet addr 后面就是该电脑的 IP 地址；
+如果电脑连接的是无线，则 wlp3s0 部分的 inet addr 后就是 IP 地址。
+
+查看 Hostname，在控制台输入：	$ hostname
+
+2. 修改hosts文件内容
+使用如下指令，分别在电脑A和电脑B的打开 hosts 文件：
+$ sudo gedit /etc/hosts
+在电脑A端的 hosts文件 中添加如下指令:
+
+127.0.0.1　　　 localhost
+127.0.1.1 [ hostname_A ]
+[IP_A] [ hostname_A ]
+[IP_B] [ hostname_B ]
+
+同理，在电脑B端的 hosts 文件中，加入如下指令：
+
+127.0.0.1　　　 localhost
+127.0.1.1 [ hostname_B ]
+[IP_B] [ hostname_B ]
+[IP_A] [ hostname_A ]
+
+3. 修改 .bashrc 文件
+使用如下指令，分别在电脑A和电脑B的打开 .bashrc 文件
+$ sudo gedit ~/.bashrc
+在电脑A端和电脑B端打开的 .bashrc 文件的最后一行，加入如下代码:
+export ROS_MASTER_URI=http://[hostname_A]:11311
+[注意] 此处假设电脑A为主机，如果改成电脑B为主机，则只需要将此步中的 [hostname_A] 改成 [hostname_B] 即可。
+
+4. 运行小乌龟程序
+电脑A端：
+首先启动 ROS：
+$ roscore
+然后 Ctrl + T 打开新的控制台，运行：
+$ rosrun turtlesim turtlesim_node
+电脑B端：
+$ rosrun turtlesim turtle_teleop_key
+现在，你就可以用电脑 B 控制电脑 A 中的小乌龟尽情遨游啦！ ~\(≧▽≦)/~啦啦啦 
+
+
+
+ros使用遥控手柄
+	安装手柄功能包
+	sudo apt-get install ros-indigo-joystick-drivers
+	安装好后运行
+	rosrun joy joy_node
+
+
+ros下.msg文件生成.h文件 (使用roscreate-pkg方式创建的包）
+	编辑CMakeLists.txt文件，将rosbuild_genmsg()前面的"#"号放开
+	在msg目录下创建.msg文件后，编译该项目，会自动生成一个msg_gen文件,里面有生成的.h文件
+
+
+
+
+
+
+

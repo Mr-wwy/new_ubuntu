@@ -1,0 +1,66 @@
+1.在GitHub官网上创建一个自己的账号。
+
+http://github.com/
+
+2.在自己的github中创建一个仓库。
+
+
+3.创建好仓库后点击clone按钮，可以知道路径
+
+
+4.在自己的linux中创建一个文件 ：mkdir gitpro
+
+5.进入gitpro：cd gitpro
+
+6.git clone （步骤3的路径）
+git clone https://github.com/weiyi31093/ffmpeg_sdl.git
+
+7.将自己的文件放入到gitpro中的目录里了。
+
+8.将文件全部添加到github中，也可以选择性的添加，后面的*改为具体的文件名就可以了
+git init
+git add *
+
+9.写本次提交的注释
+git commit -m "first project"
+
+10.最好也留下自己的联系方式
+git config --global user.email "1601744233@qq.com"
+git config --global user.name "wwy"
+
+11.执行这个命令后按照提示输入用户名和密码，本次提交就成功了
+git push
+
+
+
+
+删除代码库中的文件夹或文件
+	git pull origin master //将远程仓库里的代码拉下来
+	dir 查看目录
+	git rm -r --cached src/BCProject11/build-ShowImage-Desktop_Qt_5_9_0_GCC_64bit-Release
+		(src/BCProject11/build-ShowImage-Desktop_Qt_5_9_0_GCC_64bit-Release 为需要删除的文件)
+	git commit -m "del" //注释
+	git push -u origin master 更新
+
+
+	
+
+
+git常用命令以供使用：
+git clone <address>：复制代码库到本地；
+git add <file> ...：添加文件到代码库中；
+git rm <file> ...：删除代码库的文件；
+git commit -m <message>：提交更改，在修改了文件以后，使用这个命令提交修改。
+git pull：从远程同步代码库到本地。
+git push：推送代码到远程代码库。
+git branch：查看当前分支。带*是当前分支。
+git branch <branch-name>：新建一个分支。
+git branch -d <branch-name>：删除一个分支。
+git checkout <branch-name>：切换到指定分支。
+git log：查看提交记录（即历史的 commit 记录）。
+git status：当前修改的状态，是否修改了还没提交，或者那些文件未使用。
+git reset <log>：恢复到历史版本。
+
+
+
+

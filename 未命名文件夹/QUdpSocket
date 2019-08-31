@@ -1,0 +1,95 @@
+1. 简介
+
+UDP(User Datagram Protocol,用户数据报协议)是轻量的、不可靠的、面向数据报(datagram)、无连接的协议，可以用于对可靠性要求不高的场所。
+在使用Qt开发上位机或者应用程序中，需要使用到UDP通信，需要预先建立持久的socket链接，UDP每次发送数据报都需要指定目标IP地址和端口。
+
+2、套接字可以当作一种输入输出设备，QUdpSocket可以调用readDatagram（）和 writeDatagram（）对套接字进行读写。每当一次数据报写入完成后会释放bytesWritten（）信号。
+
+　　3、QUdpSocket在读之前要先调用bind（）函数进行绑定，如果仅仅只是写的话则无需绑定。
+
+　　4、当有数据报可读时，QUdpSocket会发出readRead（）信号，可以通过定义关联该信号的槽函数，对数据进行读取。此时hasPendingDatagrams（）也会返回true，
+	pendingDatagramSize（）可以用于获取数据报长度，然后调用读函数进行数据的读取。
+
+
+2. QUdpSocket类所用到的接口函数：
+函数 	功能
+bool bind (quint16 port) 	为UDP通信绑定一个端口  bool bind(quint16 port, QUdpSocket::ShareAddress)  //shareaddress 允许绑定在同一个端口  
+bool abort ( ) 	释放为UDP绑定的端口
+qint64 writeDatagram(QByteArray &datagram, QHostAddress &host, quint16 port) 	数据报发送，形参分别为数据报，目的IP地址，目的端口号
+bool hasPendingDatagram() 	接收到数据报时，返回值为true
+qint64 pendingDatagramSize() 	返回待读取数据报的大小
+qint64 readDatagram(char *data, qint64 maxSize) 	读取数据报，返回读取数据报的字节数，maxSize为设置的读取字节数，还可以加上源IP和源端口号
+
+
+3.收发流程
+3.1 UDP发送
+
+QUdpSocket  *udpSocket;
+//端口绑定与解绑操作
+QString port= "8080";
+udpSocket->bind(port.toInt());//绑定到port端口
+udpSocket->abort();//用于解绑端口
+//发送数据报操作
+QByteArray datagram;
+datagram.append(0xAA);//数据报填充字节数据
+QString RemoteIP = "192.168.0.1";//添加远端IP
+udpSocket->writeDatagram(datagram,datagram.size(),QHostAddress(RemoteIP),port.toInt());
+
+
+quint16 port=8080; 
+udpSocket->bind(port);//绑定到port端口 
+udpSocket->abort();//用于解绑端口 
+//发送数据报操作 
+QByteArray datagram; datagram.append(0xAA);//数据报填充字节数据 
+QHostAddress RemoteIP(“192.168.0.1”);//添加远端IP 
+quint16 RemotePort(port);//添加远端端口号 
+udpSocket->writeDatagram(datagram,RemoteIP,RemotePort);
+
+
+3.2 UDP接收
+
+//信号槽设置
+connect(udpSocket,SIGNAL(readyRead()),this,SLOT(UDPReceive()));//添加信号与槽的连接，当主机端口接收到数据时readyRead()有效，
+					进而触发跳转到UDPReceive()函数；其中readyRead()为Qt中QIODEVICE类中函数，UDPReceive()是需要自己编写的函数。
+void UDPReceive()
+{
+	//字节读取
+	while(udpSocket->hasPendingDatagrams()){//判断有数据报接收到
+		 QByteArray datagram;
+		 datagram.resize(udpSocket->pendingDatagramSize());//设置字节数组大小
+		 QHostAddress remoteIP;//接收远端IP
+		 quint16 remotePort;//接收远端端口号
+		 udpSocket->readDatagram(datagram.data(),datagram.size(),&remoteIP,&remotePort);//读取数据
+		 QString str=datagram.data();//将读取的数据转化为字符串
+	}
+}
+
+
+
+组播
+	发送端只有ip地址跟单播不一样，组播ip必须是D类ip（A类IP段　1.0.0.0 到126.255.255.255 (0段和127段不使用)
+													B类IP段　128.0.0.0 到191.255.255.255
+													C类IP段　192.0.0.0 到223.255.255.255
+													D类IP段 224.0.0.0 到 239.255.255.255。
+
+	假设组播IP是：224.0.0.1 ，发送端既可以加入组播，也可以不加入组播；
+
+	udpSocket->joinMulticastGroup(QHostAddress("224.0.0.1")); //加入组播ip：224.0.0.1
+	udpSocket->writeDatagram(ui->textEditSendData->toPlainText().toUtf8(),QHostAddress("224.0.0.1"),3956);
+
+	udpSocket->leaveMulticastGroup(QHostAddress("224.0.0.1")); //退出组播
+
+	接收端
+	udpSocket->bind(QHostAddress::AnyIPv4,3956,QUdpSocket::ShareAddress);//绑定所有ip来接收组播组信息
+    udpSocket->joinMulticastGroup(QHostAddress("224.0.0.1"));//加入组播组ip：224.0.0.1
+    udpSocket->setSocketOption(QAbstractSocket::ReceiveBufferSizeSocketOption,1024*1024*8);//设置缓冲区
+
+
+广播
+	只有发送端的ip地址和单播不一样
+	udpSocket->writeDatagram(ui->textEditSendData->toPlainText().toUtf8(),QHostAddress::Broadcast,3956);
+
+
+
+
+

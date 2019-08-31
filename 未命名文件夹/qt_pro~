@@ -1,0 +1,327 @@
+简述
+
+使用Qt的时候，我们经常会对pro进行一系列繁琐的配置，为方便大家理解、查找，现将常用的配置进行整理。
+
+| 版权声明：一去、二三里，未经博主允许不得转载。
+配置
+注释
+
+以“#”开始，到这一行结束。
+快捷键：Ctrl + /
+CONFIG
+
+指定编译器选项和项目配置，值由qmake内部识别并具有特殊意义。
+
+以下配置值控制编译标志：
+选项 	说明
+release 	项目以release模式构建。如果也指定了debug，那么最后一个生效。
+debug 	项目以debug模式构建。
+debug_and_release 	项目准备以debug和release两种模式构建。
+debug_and_release_target 	此选项默认设置。如果也指定了debug_and_release，最终的debug和release构建在不同的目录。
+build_all 	如果指定了debug_and_release，默认情况下，该项目会构建为debug和release模式。
+autogen_precompile_source 	自动生成一个.cpp文件，包含在.pro中指定的预编译头文件。
+ordered 	使用subdirs模板时，此选项指定应该按照目录列表的顺序处理它们。
+precompile_header 	可以在项目中使用预编译头文件的支持。
+warn_on 	编译器应该输出尽可能多的警告。如果也指定了warn_off，最后一个生效。
+warn_off 	编译器应该输出尽可能少的警告。
+exceptions 	启用异常支持。默认设置。
+exceptions_off 	禁用异常支持。
+rtti 	启用RTTI支持。默认情况下，使用编译器默认。
+rtti_off 	禁用RTTI支持。默认情况下，使用编译器默认。
+stl 	启用STL支持。默认情况下，使用编译器默认。
+stl_off 	禁用STL支持。默认情况下，使用编译器默认。
+thread 	启用线程支持。当CONFIG包括qt时启用，这是缺省设置。
+c++11 	启用c++11支持。如果编译器不支持c++11这个选项，没有影响。默认情况下，支持是禁用的。
+c++14 	启用c++14支持。如果编译器不支持c++14这个选项，没有影响。默认情况下，支持是禁用的。
+
+当使用debug和release选项时(Windows下默认的)，该项目将被处理三次：一次生成一个”meta”Makefile，另外两次生成Makefile.Debug和Makefile.Release。
+
+在后面的次数，build_pass和相应的debug或release添加到CONFIG选项。这使得它可以执行构建特定任务。
+
+例如：
+
+build_pass:CONFIG(debug, debug|release) {
+    unix: TARGET = $$join(TARGET,,,_debug)
+    else: TARGET = $$join(TARGET,,,d)
+}
+
+    1
+    2
+    3
+    4
+
+DEFINES
+
+qmake添加这个变量的值作为编译器C预处理器宏(-D选项)。
+
+例如：
+
+DEFINES += USE_MY_STUFF
+
+    1
+
+然后就可以在代码中使用：
+
+#ifdef USE_MY_STUFF
+    // TODO
+#else
+    // TODO
+#endif
+
+    1
+    2
+    3
+    4
+    5
+
+往往可以指定项目的特殊版本（比如：正式版、试用版）、对一些特殊功能模块（比如：加密狗）进行限制等。
+DEPENDPATH
+
+指定查看解决依赖关系的目录列表，当包含文件时使用。
+
+例如：
+
+DEPENDPATH += . forms include qrc sources
+
+    1
+
+DESTDIR
+
+指定在何处放置目标文件。
+
+例如：
+
+DESTDIR = ../../lib
+
+    1
+
+FORMS
+
+指定UI文件（参考： Qt Designer Manual）在编译前被uic处理。所有的构建这些UI文件所需的依赖、头文件和源文件都会自动被添加到项目中。
+
+例如：
+
+FORMS = mydialog.ui \
+        mywidget.ui \
+        myconfig.ui
+
+    1
+    2
+    3
+
+HEADERS
+
+指定项目中所有的头文件。
+
+qmake会自动检测是头文件的类中是否需要moc，并增加适当的依赖关系和文件到项目中，来生成和链接moc文件。
+
+例如：
+
+HEADERS = myclass.h \
+          login.h \
+          mainwindow.h
+
+    1
+    2
+    3
+
+INCLUDEPATH
+
+指定编译项目时应该被搜索的#include目录。
+
+例如：
+
+INCLUDEPATH = c:/msdev/include d:/stl/include
+
+    1
+
+如果路径包含空格，需要使用引号包含。
+
+win32:INCLUDEPATH += "C:/mylibs/extra headers"
+unix:INCLUDEPATH += "/home/user/extra headers"
+
+    1
+    2
+
+LIBS
+
+指定链接到项目中的库列表。如果使用Unix -l (library) 和 -L (library path) 标志，在Windows上qmake正确处理库（也就是说，将库的完整路径传递给链接器），库必须存在，qmake会寻找-l指定的库所在的目录。
+
+例如：
+
+win32:LIBS += c:/mylibs/math.lib
+unix:LIBS += -L/usr/local/lib -lmath
+
+    1
+    2
+
+如果路径包含空格，需要使用引号包含路径。
+
+win32:LIBS += "C:/mylibs/extra libs/extra.lib"
+unix:LIBS += "-L/home/user/extra libs" -lextra
+
+    1
+    2
+
+MOC_DIR
+
+指定来自moc的所有中间文件放置的目录（含Q_OBJECT宏的头文件转换成标准.h文件的存放目录）。
+
+例如：
+
+unix:MOC_DIR = ../myproject/tmp
+win32:MOC_DIR = c:/myproject/tmp
+
+    1
+    2
+
+OBJECTS_DIR
+
+指定所有中间文件.o（.obj）放置的目录。
+
+例如：
+
+unix:OBJECTS_DIR = ../myproject/tmp
+win32:OBJECTS_DIR = c:/myproject/tmp
+
+    1
+    2
+
+QT
+
+指定项目中使用Qt的模块。默认情况下，QT包含core和gui，以确保标准的GUI应用程序无需进一步的配置就可以构建。
+
+如果想建立一个不包含Qt GUI模块的项目，可以使用“ -=”操作符。
+
+下面一行将构建一个很小的Qt项目：
+
+QT -= gui # 仅仅使用core模块
+
+    1
+
+如果要创建一个界面，里面用到XML及网络相关的类，那么需要包含如下模块：
+
+QT += core gui widgets xml network
+
+    1
+
+如果你的项目是一个Qt Designer插件，使用值uiplugin指定项目构建成库，但特定的Qt Designer插件支持，请参考：Building and Installing the Plugin。
+RCC_DIR
+
+指定Qt资源编译器输出文件的目录（.qrc文件转换成qrc_*.h文件的存放目录）。
+
+例如：
+
+unix:RCC_DIR = ../myproject/resources
+win32:RCC_DIR = c:/myproject/resources
+
+    1
+    2
+
+RESOURCES
+
+指定资源文件 (qrc) 的名称，参考：Qt之资源系统
+
+例如：
+
+RESOURCES += Resource/resource.qrc
+
+    1
+
+RC_FILE
+
+指定应用程序资源文件的名称。这个变量的值通常是由qmake或qmake.conf处理，很少需要进行修改。
+
+例如：
+
+RC_FILE += myapp.rc
+
+    1
+
+RC_ICONS
+
+仅适用于Windows，指定的图标应该包含在一个生成的.rc文件里。如果RC_FILE 和RES_FILE变量都没有设置这才可利用。
+
+例如：
+
+RC_ICONS = myapp.ico  
+
+    1
+
+SOURCES
+
+指定项目中所有源文件。
+
+例如：
+
+SOURCES = myclass.cpp \
+          login.cpp \
+          mainwindow.cpp
+
+    1
+    2
+    3
+
+TARGET
+
+指定目标文件的名称。默认情况下包含的项目文件的基本名称。
+
+例如：
+
+TEMPLATE = app
+TARGET = myapp
+SOURCES = main.cpp
+
+    1
+    2
+    3
+
+上面项目会生成一个可执行文件，Windows下为myapp.exe，Unix下为myapp。
+TEMPLATE
+
+模板变量告诉qmake为这个应用程序生成哪种makefile。
+
+可供使用的选项：
+选项 	说明
+app 	创建一个用于构建应用程序的Makefile（默认）。
+lib 	创建一个用于构建库的Makefile。
+subdirs 	创建一个用于构建目标子目录的Makefile，子目录使用SUBDIRS变量指定。
+aux 	创建一个不建任何东西的Makefile。如果没有编译器需要被调用来创建目标，比如你的项目使用解释型语言写的，使用此功能。注：此模板类型只能用于Makefile-based生成器。特别是，它不会工作在vcxproj和Xcode生成器。
+vcapp 	仅适用于Windows。创建一个Visual Studio应用程序项目。
+vclib 	仅适用于Windows。创建一个Visual Studio库项目。
+
+例如：
+
+TEMPLATE = lib
+SOURCES = main.cpp
+TARGET = mylib
+
+    1
+    2
+    3
+
+TRANSLATIONS
+
+指定包含用户界面翻译文本的翻译(.ts)文件列表。
+
+例如：
+
+TRANSLATIONS += Resource/myapp_zh.ts \
+                Resource/myapp_en.ts
+
+    1
+    2
+
+UI_DIR
+
+指定来自uic的所有中间文件放置的目录（.ui文件转化成ui_*.h文件的存放目录）。
+
+例如：
+
+unix:UI_DIR = ../myproject/ui
+win32:UI_DIR = c:/myproject/ui
+--------------------- 
+作者：一去丶二三里 
+来源：CSDN 
+原文：https://blog.csdn.net/liang19890820/article/details/51774724 
+版权声明：本文为博主原创文章，转载请附上博文链接！

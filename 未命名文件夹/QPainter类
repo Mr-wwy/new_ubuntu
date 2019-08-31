@@ -1,0 +1,97 @@
+
+
+绘图 QPainter类
+
+	  painter->save();		//保存当前画笔属性
+	  painter->restore(); 	//恢复之前的画笔属性（和save一起用的）
+  
+	  QPainter painter(this);
+	  painter.setRenderHint(QPainter::Antialiasing);	//反走样	
+	  painter.setPen(QPen(QColor(115,115,115,255),3));	//设置笔的颜色、粗细
+	  painter.drawEllipse(QPointf(20,20),160,160);		//画椭圆	,,,圆心为（20,20），与下面的区别开
+	  painter.drawRect(20,20,160,160);					//画矩形	,,,第1，2个参数为矩形左上角的坐标，3，4个参数为右下角的坐标
+	  painter.drawEllipse(20,20,160,160);				//画椭圆	,,,第1，2个参数分别表示圆/椭圆距左上角的像素数。第3,4个参数表示圆/椭圆的宽度和高度。
+	  	更加确切地表述，这个圆或椭圆是在矩形中，这个矩形的左上角的顶点在坐标轴中的位置为（20，20），这个圆或椭圆的中心为这个矩形的中心，以下的都相似！！！
+	  painter->drawRoundedRect(20,20,160,160,15,20);	//绘制圆角矩形,,,圆角的x半径为15，y半径为20
+	  painter->drawPie(20,20,160,160,0×16,90*16);			//绘制扇形图,,,后2个参数定义扇形的宽度，0为起始角度（实际单位为1/16度），
+	  														500为扇形所展开的角度(单位也为1/16度)。
+	  painter->drawChord(20,20,160,160,500，1000);		//绘制弦,,,drawChord()函数与drawPie()函数的参数完全相同
+	  painter->drawArc(20,20,160,160,500，1000);			//绘制圆弧,,,drawArc()函数与drawPie()函数的参数完全相同。
+	  painter->drawQuadBezier(QPointArray(QRect(20,20,160,160))); //绘制贝塞尔曲线,,,传递给该函数的唯一一个参数表示一个矩形，
+	  																在其中创建贝塞尔曲线（其他参数为缺省参数，可以省略）
+	  painter.translate(m_pointX,m_pointY);				//改变坐标原点
+	  painter.rotate(-36+0.6*m_degreespeed);			//旋转
+	  static const QPointF points[3] = {QPointF(185,195), QPointF(70, 200), QPointF(185, 205)};	//各个点的坐标
+	  painter.drawPolygon(points, 3); 	//绘制多边形
+	  
+	  QLinearGradient linearGradient(60, 50, 200, 200);	//线性渐变（起点-终点）
+	  linearGradient.setColorAt(0.2, Qt::white);	
+	  linearGradient.setColorAt(0.6, Qt::green);
+	  linearGradient.setColorAt(1.0, Qt::black);	//设置区间颜色（0.2相当于5分之1）
+	  painter.setBrush(QBrush(linearGradient));		//把渐变对象传给画刷
+
+
+
+	  QPainter painter(this);
+	  QPen pen;
+	// creates a default pen
+	
+	  pen.setStyle(Qt::DashDotLine); //样式
+	  pen.setWidth(3);	//线宽
+	  pen.setBrush(Qt::green); //填充颜色
+	  pen.setCapStyle(Qt::RoundCap); //线的末端样式
+	  pen.setJoinStyle(Qt::RoundJoin); //2条线如何连起来
+	 
+	  painter.setPen(pen);
+
+	  painter.setPan(Qt::green, 3, Qt::DashDotLine, Qt::RoundCap, Qt::RoundJoin);
+
+
+
+
+
+	  
+	  void QPainter::drawText(int x, int y, const QString &text)			//和下面一个一样
+      void QPainter::drawText(const QPoint &position, const QString &text)	//在指定位置绘制文本，不会自动换行，QFont 类可以辅助设置文本的大小、
+      粗细、字符间距等，然后使用 setFont() 来设置，如下：
+QFont类		  
+		  QFont font;
+		  // 字体
+		  font.setFamily("Microsoft YaHei");
+		  // 大小
+		  font.setPointSize(16);
+		  // 粗体
+		  font.setBold(true);
+		  // 斜体
+		  font.setItalic(true);
+		  // 设置下划线
+		  font.setUnderline(true);
+		  // 设置上划线
+		  font.setOverline(true);
+		  // 设置字母大小写
+		  font.setCapitalization(QFont::SmallCaps);
+		  // 设置字符间距
+		  font.setLetterSpacing(QFont::AbsoluteSpacing, 20);
+		  // 使用字体
+		  painter.setFont(font);
+      
+      void QPainter::drawText(const QRect& rectangle,
+                            int flags,
+                            const QString &text,			//在指定的矩形内绘制文本，设置 flags 能够实现自动换行，对齐等
+                            QRect *boundingRect = 0)	
+      flags 为下面的值之一或则为对其取或的结果，例如靠上剧中 Qt::AlignTop | Qt::AlignHCenter:
+
+        Qt::AlignLeft
+        Qt::AlignRight
+        Qt::AlignHCenter
+        Qt::AlignJustify
+        Qt::AlignTop
+        Qt::AlignBottom
+        Qt::AlignVCenter
+        Qt::AlignCenter
+        Qt::TextDontClip
+        Qt::TextSingleLine
+        Qt::TextExpandTabs
+        Qt::TextShowMnemonic
+        Qt::TextWordWrap
+        Qt::TextIncludeTrailingSpaces	

@@ -1,0 +1,163 @@
+system("stty -echo");//关闭终端回显
+system("stty echo");//打开终端回显
+setbuf(stdin, NULL) //清空输入缓存(少用)
+while((c = getchar()) != '\n' && c != EOF); /清空输入缓存
+fflush(stdout); //清空输出缓冲区,并把缓冲区内容立即输出
+
+	int i；
+	for (i=0;i<10;i++)
+	{
+	  printf("%d",i);
+	  // fflush(stdout);	//加上一秒输出一个数，不加10秒后输出10个数
+	sleep(1);
+	}
+
+	int main()
+	{
+		    printf("hello");
+		    fflush(stdout);		//加上输出一个hello，不加输出2个
+		    fork();
+		    return 0;
+	}
+	
+	
+
+git clone ~		克隆
+
+
+sudo apt-get upgrade
+sudo apt-get install libts-0.0-0
+
+	
+c/c++中常用的二进制运算符有六个.这里对这六个做简单的介绍和应用举例.
+
+　　1.  &  :  与 操作.作用于两个二进制数,当然也可以对整型数据进行操作(当两边为整型数据会自动转化为二进制数).二进制与用来对位进行置零或者复位.如果两个值进行二进制与,只有当两个对应的位都为1时结果位上为1(同1结果为1，有0结果为0),其他情况都为0.如下:
+
+　　　　　　01011001 & 00101001
+
+　　　　　　结果为:00001001
+
+      2. | :或  操作.和1的与操作类似.用来合并值.只有当两个对应位都为0,结果位为0(有1结果为1，同0 结果为0),其他情况都为1.例如:
+
+　　　　　　01011001 | 00101001
+
+　　　　　　结果为:01111001
+
+      3. ^ :异或  操作.这个运算符当两个值在某一位上相同时结果位为0,不同结果为1.如一个是1一个是0(相同为0 不同为1),结果位是1;两个都为1或者0结果位是0;例如:
+
+　　　　　　01011001^00101001
+
+　　　　　　结果为:01110000
+
+       4.~ :求补操作.这个运算符只对一个二进制数据进行操作,对该数每一位取反,(即1变为0，0变为1).例如:
+
+　　　　~01011001
+
+　　　　结果为:10100110
+
+　　最后两个为移位操作符.这两个操作符用来对一个值中的位左移或右移某个特定数字的位数.">>"右移操作."<<"左移操作.        "<<"左移操作:向左移动n位，相当于原数乘以2的n次方；存在问题：左移可能改变一个数的正负；
+
+            ">>"右移操作:向右移动n位，值等于原值除以2的n次方；
+
+      例如:
+
+　　　　01011001>>2　　01011001<<2
+
+　　　　结果为:0010110　　01100100
+
+ 
+
+     实用技能：
+
+                 想要获取一个数的最低位，让这个数和1 进行&操作，都会得到这个数的最低位；例如：
+
+        00000011010001  &  00000000000001  
+
+   
+
+       最终结论为：    1&单数结果为1        
+
+                            1&双数结果为0 
+                            
+                            
+ HCNetSDK.h                           
+                            
+    typedef  unsigned int       DWORD;
+    typedef  unsigned short     WORD;
+    typedef  unsigned short     USHORT;
+    typedef  short              SHORT;
+    typedef  int                LONG;
+    typedef  unsigned char      BYTE;
+    typedef  unsigned int       UINT;
+    typedef  void*              LPVOID;
+    typedef  void*              HANDLE;
+    typedef  unsigned int*      LPDWORD; 
+    typedef  unsigned long long UINT64;
+    typedef  signed long long   INT64;
+    
+    
+    
+linux系统设置外接设备默认权限
+	sudo gedit /etc/fstab
+	
+	添加
+	the USB group
+	none /proc/bus/usb usbfs devmode=666 0 0
+	
+	
+	如何判断一个String字符串不为空（前2种当字符串为一串空格时为真）
+	
+		//第一种
+		if (str != null || !"".equals(str)) {
+		
+		}
+
+		//第二种
+		if (str != null || str.length() != 0) {
+		
+		}
+		
+		//第三种
+		if (str != null || !"".equals(str.trim())) {
+     //则字符串不为空或空格
+		}
+
+
+查看图片信息（码率等）
+	identify 1.jpg
+
+
+
+在当前文件夹打开终端
+sudo apt-get install nautilus-open-terminal
+重新加载文件管理器
+nautilus -q
+
+
+top 查看运行中的程序（进程）
+pgrep 进程名  查看某一进程 ——> ps -ef|grep 进程名
+
+
+修改文件所属组群 chgrp  组群  文件名/目录  chgrp -R 修改目录下的所有文件和目录
+
+修改文件拥有者   chown 账号名称  文件/目录  chown -R 修改目录下的所有文件和目录
+
+改变文件权限——chmod
+	r： 4（读权限）
+     w： 2（写权限）
+     x： 1（执行权限）
+
+
+
+
+修改桌面执行文件的路劲
+	主文件夹下的隐藏文件夹 .local/share/applications/ 下的相应文件，修改路劲
+
+
+
+
+
+
+
+
+     

@@ -1,0 +1,100 @@
+
+从ffmpeg官网：http://ffmpeg.org/download.html下载最新的ffmpeg安装包，然后通过如下命令解压
+	tar jxf ~
+	
+配置
+	进入解压目录
+	./configure --enable-shared --prefix=/usr/local/ffmpeg --disable-yasm
+	
+	--prefix表示程序安装的目录，这里设为/usr/local/ffmpeg。
+
+	--enable-shared表示生成动态链接库，可以供以后编程使用，同时生成的可执行程序也依赖这些动态库。
+
+	--disable-yasm表示禁用yasm。
+
+	如果不禁用yasm 就会报错
+	
+安装	
+	./configure
+	
+	make
+	
+	make install
+	
+动态链接库
+	vim /etc/ld.so.conf.d/ffmpeg.conf 
+	然后添加一行内容： 
+	/usr/loacl/ffmpeg/lib 之后保存并退出，
+	然后执行 
+	sudo ldconfig 使配置生效
+	
+加入环境变量：vi /etc/profile
+
+    最后一行加入：
+    export FFMPEG_HOME=/usr/local/ffmpeg
+	export PATH=$FFMPEG_HOME/bin:$PATH
+
+    使环境变量生效：source /etc/profile
+	
+验证
+	./ffmpeg -version
+	
+	输出
+	wangyi@wangyi-X450LCP:~/ffmpeg/ffmpeg-4.1$ ./ffmpeg -version
+	ffmpeg version 4.1 Copyright (c) 2000-2018 the FFmpeg developers
+	built with gcc 4.8 (Ubuntu 4.8.4-2ubuntu1~14.04.4)
+	configuration: --enable-shared --prefix=/usr/local/ffmpeg --disable-yasm
+	libavutil      56. 22.100 / 56. 22.100
+	libavcodec     58. 35.100 / 58. 35.100
+	libavformat    58. 20.100 / 58. 20.100
+	libavdevice    58.  5.100 / 58.  5.100
+	libavfilter     7. 40.101 /  7. 40.101
+	libswscale      5.  3.100 /  5.  3.100
+	libswresample   3.  3.100 /  3.  3.100
+	
+	则安装成功
+	
+	
+	
+ffmpeg 推流命令
+	1.将摄像头推流到hls
+
+	ffmpeg -f vfwcap  -i "0" -c:v libx264 -preset ultrafast  -acodec libmp3lame -ar 44100 -ac 1  -f flv rtmp://localhost:1935/hls/home
+
+	http://localhost:8080/hls/home.m3u8 是播放地址
+
+	2.将视频文件推流到hls
+
+	ffmpeg -re -i F:/08.flv -vcodec copy -acodec copy -f flv rtmp://localhost:1935/hls/stream
+
+	http://localhost:8080/hls/stream.m3u8 是播放地址
+
+	3.将屏幕推流到rtmp
+
+	start ffmpeg -f gdigrab -i desktop -vcodec libx264 -preset ultrafast -acodec libmp3lame -ar 44100 -ac 1 -f flv rtmp://localhost:1935/live/jing
+
+	rtmp://localhost:1935/live/jing是播放地址
+
+	4.将视频文件推流到rtmp
+
+	ffmpeg -re -i /home/wangyi/test/1.mp4 -vcodec copy -acodec copy -f flv rtmp://localhost:1935/live/stream
+	
+	rtmp://localhost:1935/live/stream是播放地址
+
+
+
+rtmp://58.200.131.2:1935/livetv/hunantv  	湖南卫视
+rtmp://live.hkstv.hk.lxdns.com/live/hks	 	香港卫视
+山东卫视-高清画质         rtmp://219.232.160.121/livestream
+安徽卫视-高清画质         rtmp://219.232.160.121/livestream
+河南卫视-高清画质         rtmp://219.232.160.122/livestream
+广西卫视-高清画质         rtmp://219.232.160.121/livestream
+重庆卫视-高清画质         rtmp://219.232.160.121/livestream
+浙江卫视-高清画质         rtmp://219.232.160.122/livestream
+南方少儿-高清画质         rtmp://219.232.160.120/livestream
+广东卫视-高清画质         rtmp://219.232.160.121/livestream
+气象频道-高清画质         rtmp://219.232.160.122/livestream
+深圳娱乐-高清画质         rtmp://219.232.160.120/livestream
+深圳电视剧-高清画质         rtmp://219.232.160.121/livestream
+深圳卫视-高清画质         rtmp://219.232.160.122/livestream
+

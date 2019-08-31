@@ -1,0 +1,50 @@
+
+
+linuxdeployqt 是Linux下的qt打包工具，可以将应用程序使用的资源（如库，图形和插件）复制到二进制运行文件所在的文件夹中
+
+1、安装linuxdeployqt
+	去github直接下载编译好的 linuxdeployqt-x86_64.AppImage 应用程序文件（https://github.com/probonopd/linuxdeployqt/releases），下不下来就去csdn上下
+	下载好之后，将其改名为linuxdeployqt，并chmod +x，然后复制到 /usr/local/bin/。然后命令行输入 linuxdelpoyqt –version，查看是否安装成功，若输出版本信息表示安装成功
+	$ chmod +x linuxdeployqt-x86_64.AppImage
+	$ mv linuxdeployqt-x86_64.AppImage linuxdeployqt
+	$ mv linuxdeployqt /usr/local/bin
+	$ linuxdelpoyqt --version （这一步貌似有问题，不管了）
+	#输出的版本信息
+	linuxdeployqt 5 (commit 37631e5), build 631 built on 2019-01-25 22:47:58 UTC
+
+2、配置qt环境
+	gedit ~/.bashrc添加
+	export PATH=/home/abc/Qt5.9.0/5.9/gcc_64/bin:$PATH #自己Qt安装的位置 
+	export LD_LIBRARY_PATH=/home/abc/Qt5.9.0/5.9/gcc_64/lib:$LD_LIBRARY_PATH #找到Qt相关的lib，下面的雷同 
+	export QT_PLUGIN_PATH=/home/abc/Qt5.9.0/5.9/gcc_64/plugins:$QT_PLUGIN_PATH 
+	export QML2_IMPORT_PATH=/home/abc/Qt5.9.0/5.9/gcc_64/qml:$QML2_IMPORT_PATH
+
+	source ~/.bashrc
+
+3、打包应用程序
+	（1）运行Qt生成release版本的可执行文件，勾选了“shadow build”，所以示例用的是build-cleanRobot-Desktop_Qt_5_9_7_GCC_64bit-Release文件夹下的cleanRobot可执行文件；
+	（2）创建一个文件夹，名称最好是用可执行文件的名称，然后将cleanRobot可执行文件复制到此文件夹下；
+	（3）使用 linuxdeployqt 进行打包，一定要加上-appimage选项，命令如下：
+linuxdeployqt cleanRobot -appimage
+
+	执行上面命令出现提示信息，不用管，只是创建了一个需要你自己编辑的desktop文件：
+
+	ERROR: Desktop file missing, creating a default one (you will probably want to edit it)
+
+	到这一步，就把可执行文件的动态库等依赖文件都复制到该文件夹中了,此时把该文件夹拷贝到别的电脑上，修改下可执行文件的权限就可以运行了（无需装其他任何东西，如qt，ros什么的）
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	

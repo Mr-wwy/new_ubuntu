@@ -1,0 +1,90 @@
+
+
+QTableView 类（表格视图控件）
+
+	QTableView* table = new QTableView();
+
+一 添加表头
+
+    //准备数据模型
+    QStringList headerlabels;
+    headerlabels<<tr("ID")<<tr("Gps毫秒")<<tr("间距")<<tr("经度")<<tr("维度")<<tr("高斯X")<<tr("高斯Y")<<tr("期望速度")<<tr("点类型");
+    QStandardItemModel *student_model=new QStandardItemModel(0,9,this);
+    student_model->setHorizontalHeaderLabels(headerlabels);
+    //利用setModel()方法将数据模型与QTableView绑定
+    table->setModel(student_model);
+
+
+二 设置表格属性
+
+    //设置列宽不可变动，即不能通过鼠标拖动增加列宽       
+    table->horizontalHeader()->setResizeMode(0, QHeaderView::Fixed);   
+    table->horizontalHeader()->setResizeMode(1, QHeaderView::Fixed);   
+    table->horizontalHeader()->setResizeMode(2, QHeaderView::Fixed);   
+    table->horizontalHeader()->setResizeMode(3, QHeaderView::Fixed);   
+    table->horizontalHeader()->setResizeMode(4, QHeaderView::Fixed);   
+
+    //设置表格的各列的宽度值       
+    table->setColumnWidth(0,100);   
+    table->setColumnWidth(1,100);   
+    table->setColumnWidth(2,100);   
+    table->setColumnWidth(3,100);   
+    table->setColumnWidth(4,100);
+    
+    table->verricalHeader()->setDefaultSeciontSize(22);  //设置默认行高
+
+	table->horizontalHeader()->setDefaultSecionSize(100);  //设置默认列宽       
+
+    //默认显示行头，如果你觉得不美观的话，我们可以将隐藏       
+    table->verticalHeader()->hide();      
+
+    //设置选中时为整行选中       
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);         
+     
+    //设置表格的单元为只读属性，即不能编辑       
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);          
+
+    //如果你用在QTableView中使用右键菜单，需启用该属性       
+    ui->tstudent_tableview->setContextMenuPolicy(Qt::CustomContextMenu);
+	
+	ui->tstudent_tableview->setShowGrid(false);   //不显示网格线
+
+三 动态添加行
+
+    在表格中添加行时，我们只需要在model中插入数据即可，一旦model中的数据发生变化，QTabelView显示就会做相应的变动
+
+    //在第一行添加学生张三的个人信息(setItem函数的第一个参数表示行号，第二个表示列号，第三个为要显示的数据)
+    student_model->setItem(0, 0, new QStandardItem(“张三"));
+    student_model->setItem(0, 1, new QStandardItem("20120202"));
+    student_model->setItem(0, 2, new QStandardItem("男"));
+    student_model->setItem(0, 3, new QStandardItem("18"));
+    student_model->setItem(0, 4, new QStandardItem("土木学院"));
+
+
+四 设置数据显示的样式
+
+    //设置单元格文本居中，张三的数据设置为居中显示
+    student_model->item(0, 0)->setTextAlignment(Qt::AlignCenter);
+    student_model->item(0, 1)->setTextAlignment(Qt::AlignCenter);
+    student_model->item(0, 2)->setTextAlignment(Qt::AlignCenter);
+    student_model->item(0, 3)->setTextAlignment(Qt::AlignCenter);
+    student_model->item(0, 4)->setTextAlignment(Qt::AlignCenter);
+
+    //设置单元格文本颜色，张三的数据设置为红色
+    student_model->item(0, 0)->setForeground(QBrush(QColor(255, 0, 0)));
+    student_model->item(0, 1)->setForeground(QBrush(QColor(255, 0, 0)));
+    student_model->item(0, 2)->setForeground(QBrush(QColor(255, 0, 0)));
+    student_model->item(0, 3)->setForeground(QBrush(QColor(255, 0, 0)));
+    student_model->item(0, 4)->setForeground(QBrush(QColor(255, 0, 0)));
+
+    //将字体加粗
+    student_model->item(0, 0)->setFont( QFont( "Times", 10, QFont::Black ) );
+    student_model->item(0, 1)->setFont( QFont( "Times", 10, QFont::Black ) );
+    student_model->item(0, 2)->setFont( QFont( "Times", 10, QFont::Black ) );
+    student_model->item(0, 3)->setFont( QFont( "Times", 10, QFont::Black ) );
+    student_model->item(0, 4)->setFont( QFont( "Times", 10, QFont::Black ) );
+
+    //设置排序方式，按年龄降序显示
+    student_model->sort(3, Qt::DescendingOrder);
+    
+    table->setAlternatingRowColors(true);  //隔行自动变色

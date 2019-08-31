@@ -1,0 +1,199 @@
+
+QString 类
+
+    QString 类提供了很多不同原型的构造函数以方便使用。如：
+
+    Qstring();                                        // 构造空字符串
+    QString(QChar ch);                           // 由 QChar 对象 ch构造
+    QString(const QChar *pch, int size);    // 由 QChar 数组pch构造，size 是数组大小
+    QString(const QString &obj);              // 拷贝构造函数
+    QString(const char *str);                  //  由字符串 str 构造，str是一个普通字符串
+    
+    可以用下面的成员函数判断 QString 对象是否为空字符串：
+
+	bool isEmpty() const;    // 判断是否为空字符串
+  
+	   QString str1,str2;
+	//====================================================================
+	//拼接
+	//后拼接
+	  str1.append(str2);//把str2加到str1后面
+	//前拼接
+	  str1.prepend(str2);//把str2加到str1前面
+	//从中间插入
+	  QString str = "Meal";
+	  str.insert(1, QString("ontr"));// str == "Montreal"
+	//====================================================================
+	//截取
+	//左截取
+	  QString x = "Pineapple";
+	  QString y = x.left(4);      // y == "Pine"
+	//右截取
+	  QString x = "Pineapple";
+	  QString y=x.right(5);       //y==apple
+	//从中间截取
+	  str1.mid(1,2)//从索引1开始，截取两个字符
+	//===================================================================
+	//截取或填充  
+	  QString s = "apple";
+	  QString t = s.leftJustified(8, '.');    // t == "apple..."
+	//====================================================================
+	//删除
+	//尾删
+	  QString str("LOGOUT\r\n");//从尾部删除n个字符，返回剩余字符
+	  str.chop(2);// str == "LOGOUT"
+	//头删
+	  QString str("LOGOUT\r\n");//从尾部删除n个字符，返回剩余字符
+	  str.right(2);// str == "GOUT\r\n"
+	//从中间删
+	  QString s = "Montreal";
+	  s.remove(1, 4);    // s == "Meal"  
+	//===================================================================  
+	//清空
+	  QString s = "apple";
+	  s.clear();            //s==""
+	//===================================================================  
+	//填充
+	  QString str = "Berlin";
+	  str.fill('z');        // str == "zzzzzz"
+	  str.fill('A', 2);// str == "AA"
+	//===================================================================  
+	//替换
+	  QString x = "Say yes!";
+	  QString y = "no";
+	  x.replace(4, 3, y);    // x == "Say no!"
+	//===================================================================  
+	//重复
+	  QString str("ab");
+	  str.repeated(4);            // returns "abababab"
+	//===================================================================  
+	//字符数
+	  int nToalLenth = string.size();
+	//===================================================================  
+	//索引值
+	  int nIndex = string.indexOf("****");
+	//===================================================================  
+	//以指定字符串为分割符，进行分割
+	//返回一个或多个分割后的值
+	  QString str;
+	  QString csv = "forename,middlename,surname,phone";
+	  QString path = "/usr/local/bin/myapp"; // First field is empty
+	  QString::SectionFlag flag = QString::SectionSkipEmpty;
+
+	  str = csv.section(',', 2, 2);   // str == "surname"
+	  str = path.section('/', 3, 4);  // str == "bin/myapp"
+	  str = path.section('/', 3, 3, flag); // str == "myapp" 
+	  //如果索引值是负数，则从右到左取值
+	  str = csv.section(',', -3, -2);  // str == "middlename,surname"
+	  str = path.section('/', -1); // str == "myapp" 
+	//返回QStringList
+	  QString str = "a,,b,c";
+	  QStringList list1 = str.split(',');
+	  // list1: [ "a", "", "b", "c" ]
+	  QStringList list2 = str.split(',', QString::SkipEmptyParts);
+	  // list2: [ "a", "b", "c" ]
+	  //运用split 将字符竖向排列
+	  QString strText = QStringLiteral("一去二三里，烟村四五家。");
+	   pLabel->setText(strText.split("",          QString::SkipEmptyParts).join("\n"));
+	   pLabel->setAlignment(Qt::AlignCenter);
+	//===================================================================  
+	//去除全部witeSpace符号：'\t', '\n', '\v', '\f', '\r', and ' '.
+	  QString str = "  lots\t of\nwhitespace\r\n ";
+	  str = str.simplified();    // str == "lots of whitespace";
+	//去除首尾whiteSpace符号
+	  QString str = "  lots\t of\nwhitespace\r\n ";
+	  str = str.trimmed();      // str == "lots\t of\nwhitespace"  
+	  
+	  QString的arg()方法用于填充字符串中的%1,%2...为给定的参数，如
+
+		QString m = tr("%1:%2:%3").arg("12").arg("60").arg("60");    // m = "12:60:60:
+
+	它还有另外一种重载方法：
+
+		QString QString::​arg(int a, int fieldWidth = 0, int base = 10, QChar fillChar = QLatin1Char( ' ' )) const
+
+	这个方法用于填充字符串中的%1,%2...为给定格式的整形数字，其中第一个参数是要填充的数字，第二个参数为最小宽度，第二个参数为进制，
+	第四个参数为当原始数字长度不足最小宽度时用于填充的字符。
+		如      QString text = QString("%1:%2")
+		                       .arg(123, 5, 10, QChar('0'))
+		                       .arg(456, 5, 10, QChar('0'));    // text = "00123:00456";
+		
+	（1）QString转char*  示例：
+		char *a=nullptr;
+		QString str="hello,world!";
+		a=str->toLatin1().data();
+
+	其中toLatin1()转换为QByteArray类型后再用data()返回C-style字符串。
+
+	（2）char*转QString
+
+	直接构造即可。示例：
+
+	QString str=QString("hello,world!");
+	
+	QString与string的相互转换	
+
+		1.QString转换String
+
+		string s = qstr.toStdString();
+
+		2.String转换QString
+
+		QString qstr2 = QString::fromStdString(s);
+	如果出现乱码、
+		std::string cstr;
+		QString qstring;
+		//从std::string 到QString
+		qstring = QString(QString::fromLocal8Bit(cstr.c_str()));
+		//从QString 到 std::string
+		cstr = string((const char *)qstring.toLocal8Bit());
+		//不需要从gbk转到utf8
+		QString value_content = QString::fromStdString(vec[i].content);
+		QString value_classname = QString::fromStdString(vec[i].classname);
+
+
+	QString 类提供了很多函数用于将字符串转换为数值，如：
+
+		double toDouble(bool *ok = 0) const;                                     // 转换为高精度浮点数
+		float toFloat(bool *ok = 0) cosnt;                                          // 转换为浮点数
+		int toInt(bool *ok, int base = 10) const;                                 // 转换为整型数
+		long toLong(bool *ok, int base = 10) cosnt;                            // 转换为长整型
+		short toShort(bool *ok, int base = 10) const;                          // 转换为短整型
+		uint toUInt(bool *ok = 0; int base = 10) const                         // 转换为无符号整型数
+		ulong toLong(bool *ok = 0, int base = 10) const;                     // 转换为无符号长整型数 
+		ushort toUShort(bool *ok = 0, int base = 10) const;                 // 转换为无符号短整型数
+		
+    QString 类也提供了大小写转换的函数，如：
+
+    QString toLower() const;    // 转换为小写
+    QString toUpper() const;    // 转换为大写
+      
+	QString 类提供了一个函数用于两个 QString 对象的比较：
+
+	int compare(const QString &s1, const QString &s2, Qt::CaseSensitivity cs = Qt::CaseSensitive);
+
+	这是一个静态成员函数，它可以比较 s1 和 s2 的大小，参数 cs 有以下两个取值。
+		Qt::CaseInsensitive： 表示对大小写不敏感
+		Qt::Casesensitive ：    表示对大小写敏感
+    返回值的含义如下：大于 0 表示 s1 大于 s2，等于 0 表示 s1 等于 s2， 小于 0 表示 s1 小于 s2。  
+    
+   列：
+   		QString str1, str2;
+   		str1.compare(str2, Qt::Casesensitive) //等于0 则一样    	
+       
+  	实际上更为直观的是使用 QString 类的比较操作符，如：
+		bool operator < (StringType other) const;        // 比较是否小于 other人
+		bool operator <= (StringType other) const;      // 比较是否小于等于 other
+		bool operator == (StringType other) const;      // 比较是否等于 other
+		bool operator > (StringType other) constt;       // 比较是否大于 other
+		bool operator >= (StringType other) const;      // 比较是否大于等于 other
+		bool operator != (StringType other) const;       // 比较是否不等于 other
+    这里的 StringType 指的是 （const QString &）或 （const char *），哥也就是说，这些操作副既可以与 QString 对象比较，
+    也可以与普通的字符串比较。它们的局限性是第一个操作数必须是 QString 对象，因此，Qt 中又定义了以下操作符：
+		bool operator < (const char *s1, const QString &s2);                 // 比较 s1 是否小于 s2
+		bool operator <= (const char *s1, const QString &s2);               // 比较 s1 是否小于等于 s2
+		bool operator == (const char *s1, const QString &s2);               // 比较 s1 是否等于 s2
+		bool operator > (const char *s1, const QString &s2);                 // 比较 s1 是否大于 s2
+		bool operator >= (const char *s1, const QString &s2);               // 比较 s1 是否大于等于 s2
+		bool operator != (const char *s1, const QString &s2);                // 比较 s1 是否不等于 s2
+    这些操作符不是 QString 类的成员，它们的第一个参数是普通字符串。

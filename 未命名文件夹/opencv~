@@ -1,0 +1,428 @@
+
+opencv编译过程
+	创建CMakeLists.txt文件，内容为：
+		project( opencv )
+		find_package( OpenCV REQUIRED )
+
+		add_executable( DisplayImage DisplayImage.cpp )
+		target_link_libraries( DisplayImage ${OpenCV_LIBS} )
+
+	cmake .	(.表示编译到当前文件) 会生成一系列文件
+	make
+
+
+
+
+
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <iostream>
+
+using namespace cv;
+int main()
+{
+	// 图像源读取及判断
+    cv::Mat srcImage = cv::imread("lakeWater.jpg");
+	if (!srcImage.data)   
+       return -1;
+    cv::imshow("srcImage", srcImage);
+    cv::Mat image_gray, image_hsv, image_H, image_S, image_V, image_col;
+    //灰度空间转换
+    cv::cvtColor(srcImage, image_gray, CV_BGR2GRAY);   
+    cv::imshow("image_gray", image_gray);
+    // HSV颜色空间转换
+    cv::cvtColor(srcImage, image_hsv, CV_BGR2HSV);
+	cv::imshow("image_hsv", image_hsv);  
+    // YCrCb颜色空间转换
+	cv::cvtColor(srcImage, image_col,  CV_BGR2YCrCb);
+	cv::imshow("image_YCrCb", image_col);
+	// HLS颜色空间转换
+	cv::cvtColor(srcImage, image_col, CV_BGR2HLS);
+	cv::imshow("image_HLS", image_hsv);
+	// Lab颜色空间转换
+	cv::cvtColor(srcImage, image_col, CV_BGR2Lab);
+	cv::imshow("image_Lab", image_col);    
+    // 分离HSV各个通道
+    std::vector<cv::Mat> hsvChannels; 
+    cv::split(image_hsv,hsvChannels);
+    // 0通道为H分量，1通道为S分量，2通道为V分量
+    image_H = hsvChannels[0];
+    image_S = hsvChannels[1];
+    image_V = hsvChannels[2];
+    // 分别显示各通道图像
+    cv::imshow("image_H", image_H);
+    cv::imshow("image_S", image_S);
+    cv::imshow("image_V", image_V);
+    cv::waitKey(0);				//等待多少毫秒后关闭窗口 0表示无限等待 所有的imshow()后接一个waitkey()就可以了
+	return 0;
+}
+
+例如取出 A 矩阵的第 i 行,将这一行的所有元素都乘以 2,然后赋值给第 j行,可以这样写:
+A.row(j) = A.row(i)*2;
+
+B = A(Range(m, n), Range(i, j));	提取 A 的 m-n 行（包括m行不包括n行）i-j列（包括i列不包括j列）赋值给B
+Range::all()	表示所有行或列
+
+
+打开图像 函数原型
+00 Mat imread(const String& filename,int flags = IMREAD_COLOR);  
+
+00 im.empty()	检查是否打开图像 （成功返回0）
+
+参数filename: 待打开图片的绝对地址
+
+参数flags：打开的参数，这个非常重要，因为如果设置不合适的话，很容易出现预想之外的效果。
+它可以指导将原图读取时进行一定的转换。默认值是IMREAD_LOAD_GDAL。因此，如果是想直接处理原图，应该设置为IMREAD_UNCHANED
+
+1 IMREAD_UNCHANGED (<0)	打开原图
+
+2 IMREAD_GRAYSCALE (0)	打开灰度图		
+
+3 IMREAD_COLOR (>0)		打开3通道的彩色图
+
+4 IMREAD_ANYDEPTH 		打开16位/32位图像，当输入具有相应的深度时，否则将其转换为8位。
+
+5 IMREAD_ANYCOLOR 		以任何可能的颜色格式读取图像
+
+6 IMREAD_LOAD_GDAL 		使用GDAL驱动程序加载图像
+
+7 IMREAD_REDUCED_GRAYSCALE_2 		将图像转换为单通道灰度图像，图像尺寸减小1/2。
+
+8 IMREAD_REDUCED_COLOR_2 			将图像转换为3通道BGR彩色图像，图像尺寸减小1/2。
+
+9 IMREAD_REDUCED_GRAYSCALE_4 		将图像转换为单通道灰度图像，图像尺寸减小1/4
+
+10 IMREAD_REDUCED_COLOR_4 			将图像转换为3通道BGR彩色图像，图像尺寸减小1/4
+
+11 IMREAD_REDUCED_GRAYSCALE_8 		将图像转换为单通道灰度图像，图像尺寸减小1/8
+
+12 IMREAD_REDUCED_COLOR_8 			将图像转换为3通道BGR彩色图像，图像尺寸减小1/8
+
+CV_LOAD_IMAGE_UNCHANGED，这个标识在新版本中被废置了，忽略。
+CV_LOAD_IMAGE_ANYDEPTH- 如果取这个标识的话，若载入的图像的深度为16位或者32位，就返回对应深度的图像，否则，就转换为8位图像再返回。
+CV_LOAD_IMAGE_COLOR- 如果取这个标识的话，总是转换图像到彩色一体
+CV_LOAD_IMAGE_GRAYSCALE- 如果取这个标识的话，始终将图像转换成灰度1
+
+
+2.namedWindow函数
+
+
+顾名思义，namedWindow函数，用于创建一个窗口。
+
+函数原型是这样的：
+
+void namedWindow(const string& winname,int flags=WINDOW_AUTOSIZE ); 
+
+
+      ■ 第一个参数，const string&型的name，即填被用作窗口的标识符的窗口名称。
+
+      ■ 第二个参数，int 类型的flags ，窗口的标识，可以填如下的值：
+
+        WINDOW_NORMAL设置了这个值，用户便可以改变窗口的大小（没有限制）
+        WINDOW_AUTOSIZE如果设置了这个值，窗口大小会自动调整以适应所显示的图像，并且不能手动改变窗口大小。
+        WINDOW_OPENGL 如果设置了这个值的话，窗口创建的时候便会支持OpenGL。
+
+函数剖析：
+
+首先需要注意的是，它有默认值WINDOW_AUTOSIZE，所以，一般情况下，这个函数我们填一个变量就行了。
+
+namedWindow函数的作用是，通过指定的名字，创建一个可以作为图像和进度条的容器窗口。如果具有相同名称的窗口已经存在，则函数不做任何事情。
+
+我们可以调用destroyWindow()或者destroyAllWindows()函数来关闭窗口，并取消之前分配的与窗口相关的所有内存空间。
+
+但话是这样说，其实对于代码量不大的简单小程序来说，我们完全没有必要手动调用上述的destroyWindow()或者destroyAllWindows()函数，因为在退出时，所有的资源和应用程序的窗口会被操作系统会自动关闭。
+
+
+3.imshow函数
+
+
+在指定的窗口中显示一幅图像。
+
+void imshow(const string& winname, InputArray mat);
+
+ ■ 第一个参数，const string&类型的winname，填需要显示的窗口标识名称。
+
+ ■ 第二个参数，InputArray 类型的mat，填需要显示的图像。
+imshow 函数详解：
+
+imshow 函数用于在指定的窗口中显示图像。如果窗口是用CV_WINDOW_AUTOSIZE（默认值）标志创建的，那么显示图像原始大小。否则，将图像进行缩放以适合窗口。而imshow 函数缩放图像，取决于图像的深度：
+
+    如果载入的图像是8位无符号类型（8-bit unsigned），就显示图像本来的样子。
+    如果图像是16位无符号类型（16-bit unsigned）或32位整型（32-bit integer），便用像素值除以256。也就是说，值的范围是[0,255 x 256]映射到[0,255]。
+    如果图像是32位浮点型（32-bit floating-point），像素值便要乘以255。也就是说，该值的范围是[0,1]映射到[0,255]。
+
+
+
+保存图像 函数原型
+00 bool imwrite(const string& filename, InputArray image, const vector<int>& params=vector<int>())
+
+第一个参数const String& filename表示需要写入的文件名，必须要加上后缀，比如“123.png”。
+第二个参数InputArray image表示要保存的图像（Mat类型的图像数据）。
+第三个参数const std::vector& params表示为特定格式保存的参数编码，它有一个默认值std::vector< int >()，所以一般情况下不用写。
+
+
+00 cv::cvtColor()支持多种颜色空间之间的转换，其支持的转换类型和转换码如下：
+
+1、RGB和BGR（opencv默认的彩色图像的颜色空间是BGR）颜色空间的转换
+
+cv::COLOR_BGR2RGB
+cv::COLOR_RGB2BGR
+cv::COLOR_RGBA2BGRA
+cv::COLOR_BGRA2RGBA
+
+2、向RGB和BGR图像中增添alpha通道
+
+cv::COLOR_RGB2RGBA
+cv::COLOR_BGR2BGRA
+
+3、从RGB和BGR图像中去除alpha通道
+
+cv::COLOR_RGBA2RGB
+cv::COLOR_BGRA2BGR
+
+4、从RBG和BGR颜色空间转换到灰度空间
+
+cv::COLOR_RGB2GRAY
+cv::COLOR_BGR2GRAY
+
+cv::COLOR_RGBA2GRAY
+cv::COLOR_BGRA2GRAY
+
+5、从灰度空间转换到RGB和BGR颜色空间
+
+cv::COLOR_GRAY2RGB
+cv::COLOR_GRAY2BGR
+
+cv::COLOR_GRAY2RGBA
+cv::COLOR_GRAY2BGRA
+
+6、RGB和BGR颜色空间与BGR565颜色空间之间的转换
+
+cv::COLOR_RGB2BGR565
+cv::COLOR_BGR2BGR565
+cv::COLOR_BGR5652RGB
+cv::COLOR_BGR5652BGR
+cv::COLOR_RGBA2BGR565
+cv::COLOR_BGRA2BGR565
+cv::COLOR_BGR5652RGBA
+cv::COLOR_BGR5652BGRA
+
+7、灰度空间域BGR565之间的转换
+
+cv::COLOR_GRAY2BGR555
+cv::COLOR_BGR5552GRAY
+
+8、RGB和BGR颜色空间与CIE XYZ之间的转换
+
+cv::COLOR_RGB2XYZ
+cv::COLOR_BGR2XYZ
+cv::COLOR_XYZ2RGB
+cv::COLOR_XYZ2BGR
+
+9、RGB和BGR颜色空间与uma色度（YCrCb空间）之间的转换
+
+cv::COLOR_RGB2YCrCb
+cv::COLOR_BGR2YCrCb
+cv::COLOR_YCrCb2RGB
+cv::COLOR_YCrCb2BGR
+
+10、RGB和BGR颜色空间与HSV颜色空间之间的相互转换
+
+cv::COLOR_RGB2HSV
+cv::COLOR_BGR2HSV
+cv::COLOR_HSV2RGB
+cv::COLOR_HSV2BGR
+
+11、RGB和BGR颜色空间与HLS颜色空间之间的相互转换
+
+cv::COLOR_RGB2HLS
+cv::COLOR_BGR2HLS
+cv::COLOR_HLS2RGB
+cv::COLOR_HLS2BGR
+
+12、RGB和BGR颜色空间与CIE Lab颜色空间之间的相互转换
+
+cv::COLOR_RGB2Lab
+cv::COLOR_BGR2Lab
+cv::COLOR_Lab2RGB
+
+cv::COLOR_Lab2BGR
+
+13、RGB和BGR颜色空间与CIE Luv颜色空间之间的相互转换
+
+cv::COLOR_RGB2Luv
+cv::COLOR_BGR2Luv
+cv::COLOR_Luv2RGB
+cv::COLOR_Luv2BGR
+
+14、Bayer格式（raw data）向RGB或BGR颜色空间的转换
+
+cv::COLOR_BayerBG2RGB
+cv::COLOR_BayerGB2RGB
+cv::COLOR_BayerRG2RGB
+cv::COLOR_BayerGR2RGB
+cv::COLOR_BayerBG2BGR
+cv::COLOR_BayerGB2BGR
+cv::COLOR_BayerRG2BGR
+cv::COLOR_BayerGR2BGR
+
+
+
+1、Mat转换为QImage
+
+
+QImage Mat2QImage(const Mat& mat)
+{
+Mat rgb;
+cvtColor(mat, rgb, CV_BGR2RGB);
+    return QImage((const unsigned char*)(rgb.data), rgb.cols, rgb.rows, QImage::Format_RGB888); 
+}
+
+
+2、QImage转换为 Mat
+
+
+Mat QImage2Mat(const QImage& qimage)
+{
+Mat mat = Mat(qimage.height(), qimage.width(), CV_8UC4, (uchar*)qimage.bits(), qimage.bytesPerLine()); 
+Mat mat2 = Mat(mat.rows, mat.cols, CV_8UC3 ); 
+int from_to[] = { 0,0, 1,1, 2,2 }; 
+mixChannels( &mat, 1, &mat2, 1, from_to, 3 ); 
+return mat2; 
+
+}
+
+
+3、opencv Mat成ROS图像msg
+
+Mat image = cv::imread(argv[1], CV_LOAD_IMAGE_COLOR); 
+waitKey(30);
+sensor_msgs::ImagePtr msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", image).toImageMsg(); 
+
+
+4、IplImage和char互转
+
+	IplImage *frame, fa;
+	frame = cvQueryFrame(capture); //从摄像头取帧
+    int h,w,step,channel,d;
+    h = frame->height;
+    w = frame->width;
+    step = frame->widthStep;
+    d = frame->depth;
+    channel = frame->nChannels;
+
+    char *data = frame->imageData; //IplImage转char*
+    
+    fa = cvCreateImage(cvSize(w,h),d,channel);	//char*转IplImage
+    cvSetData(fa,data,step);
+    
+    //IplImage转char[]
+    IplImage *image_dst = cvCreateImage(cvSize(w, h), 8, 1);
+    cvCvtColor(frame, image_dst, CV_RGB2GRAY);
+    char data[1000000];
+    for(int i=0;i<image_dst->height;i++)
+    {
+        for(int j=0;j<image_dst->width;j++)
+        {
+            data[image_dst->width*i + j] = ((char*)(image_dst->imageData + i*image_dst->widthStep))[j];
+        }
+    }
+    
+    //char[]转IplImage(灰度)
+    fa = cvCreateImage(cvSize(640, 480), 8, 1);
+    for(int i = 0; i < fa->height; i++)
+    {
+        for (int j = 0; j < fa->width; j++)
+        {
+            ((char *)(fa->imageData + i * fa->widthStep))[j] = data[fa->width * i + j];
+        }
+    }
+    
+    
+    
+5、IplImage和QImage互转
+	IplImage *frame；
+	QImage image = QImage((const uchar*)frame->imageData,
+                          frame->width, frame->height, QImage::Format_RGB888).rgbSwapped();
+    //QImage转IplImage
+    w = image.width();
+    h = image.height();
+    CvSize size;
+    size.width = w;
+    size.height = h;
+    IplImage *ip = cvCreateImage(size, IPL_DEPTH_8U, 3);
+    for(int x = 0; x<h; x++)
+    {
+        for(int y = 0; y<w; y++)
+        {
+            QRgb rgb = image.pixel(y,x);
+            cvSet2D(ip, x, y, CV_RGB(qRed(rgb), qGreen(rgb), qBlue(rgb)));
+        }
+    }
+
+
+OpenCV中提供了一个函数cvGetCaptureProperty(Capture* cap,int property_index)函数来获取视频文件的一些属性，这是其中的OpenCV中属性的一些宏定义：
+
+#define CV_CAP_PROP_POS_MSEC       0     //以毫秒计算的当前的位置
+#define CV_CAP_PROP_POS_FRAMES     1  //以帧计算当前的位置
+#define CV_CAP_PROP_POS_AVI_RATIO  2  //视频的相对位置，从0 到 1 前面这三个参数应该是跟视频播放，读取相关的动态信息
+#define CV_CAP_PROP_FRAME_WIDTH    3    //帧宽
+#define CV_CAP_PROP_FRAME_HEIGHT   4   //帧高度
+#define CV_CAP_PROP_FPS            5    //帧率
+#define CV_CAP_PROP_FOURCC         6   //4 字符编码方式
+#define CV_CAP_PROP_FRAME_COUNT    7 //视频帧数
+#define CV_CAP_PROP_FORMAT         8   //视频格式
+#define CV_CAP_PROP_MODE           9  //
+#define CV_CAP_PROP_BRIGHTNESS    10   //亮度
+#define CV_CAP_PROP_CONTRAST      11  //对比度
+#define CV_CAP_PROP_SATURATION    12 //饱和度
+#define CV_CAP_PROP_HUE           13  //色调
+#define CV_CAP_PROP_GAIN          14 //增益
+#define CV_CAP_PROP_EXPOSURE      15 //曝光
+#define CV_CAP_PROP_CONVERT_RGB   16 //
+#define CV_CAP_PROP_WHITE_BALANCE 17 //白平衡
+#define CV_CAP_PROP_RECTIFICATION 18 //
+
+
+
+图片缩放
+	Mat imagedst;
+	double fscale = 0.1;
+    Size dsize = Size(imagedst.cols*fscale, imagedst.rows*fscale);
+    Mat mat = Mat(dsize, CV_32S);
+    ::resize(imagedst, mat, dsize, 0, 0, INTER_AREA);
+    
+    
+  QImage image
+  QPixmap pixmap = QPixmap::fromImage(image);
+    int with = ui->label->width();
+    int height = ui->label->height();
+    QPixmap fitpixmap = pixmap.scaled(with, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);  // 饱满填充
+    //QPixmap fitpixmap = pixmap.scaled(with, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
+	image = image.mirrored(true, false); //图像左右镜像，第二个参数表示是否上下镜像
+    ui->label->setPixmap(fitpixmap);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    
+

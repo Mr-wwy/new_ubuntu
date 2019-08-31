@@ -1,0 +1,47 @@
+
+#3.head file path，头文件目录
+INCLUDE_DIRECTORIES(
+include
+)
+
+#4.source directory，源文件目录
+AUX_SOURCE_DIRECTORY(src DIR_SRCS)
+
+#5.set environment variable，设置环境变量，编译用到的源文件全部都要放到这里，否则编译能够通过，但是执行的时候会出现各种问题，比如"symbol lookup error xxxxx , undefined symbol"
+SET(TEST_MATH
+${DIR_SRCS}
+)
+
+
+
+
+********
+×× 表示必加
+
+	# 指定cmake版本
+cmake_minimum_required(VERSION 2.8)
+
+××	# 指定项目的名称，一般和项目的文件夹名称对应
+project(opencvTest)
+
+	# 查找OpenCV，可能需要设置opencvvdir变量,到包含OpenCvFask.cGug文件的目录的绝对路径,通过命令行或GUI
+××	#其中的OpenCV一定要遵循该大小写
+find_package(OpenCV REQUIRED)
+
+	# If the package has been found, several variables will
+	# be set, you can find the full list with descriptions
+	# in the OpenCVConfig.cmake file.
+	# Print some message showing some of them
+message(STATUS "OpenCV library status:")
+message(STATUS "    version: ${OpenCV_VERSION}")
+message(STATUS "    libraries: ${OpenCV_LIBS}")
+message(STATUS "    include path: ${OpenCV_INCLUDE_DIRS}")
+
+	# Add OpenCV headers location to your include paths
+include_directories(${OpenCV_INCLUDE_DIRS})
+
+××	# 添加目标文件和源文件
+add_executable(main main.cpp)
+
+××	# 添加可执行文件所需要的库
+target_link_libraries(main ${OpenCV_LIBS})

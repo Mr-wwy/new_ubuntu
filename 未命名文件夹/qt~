@@ -1,0 +1,426 @@
+安装qt-ros
+
+        sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+        sudo add-apt-repository ppa:levi-armstrong/qt-libraries-trusty
+        sudo add-apt-repository ppa:levi-armstrong/ppa
+        sudo apt-get update && sudo apt-get install qt57creator-plugin-ros libqtermwidget57-0-dev
+
+出现错误
+
+        下列软件包有未满足的依赖关系：
+        qt57creator-plugin-ros : 依赖: libqtermwidget59-0 (>= 0.6.1) 但是它将不会被安装
+        E: 无法修正错误，因为您要求某些软件包保持现状，就是它们破坏了软件包间的依赖关系。
+
+3.解决方法
+
+        sudo apt-get update && sudo apt install qt59creator
+        sudo apt-get install qt57creator-plugin-ros
+
+配置
+	打开 /usr/lib/x86_64-linux-gnu/qt-default/qtchooser/default.conf 文件
+	里面内容该为安装的qt路径 （/opt/qt59/bin）
+
+	打开 ~/.profile
+	export LD_LIBRARY_PATH=/home/abc/Qt5.9.0/5.9/gcc_64/lib:$LD_LIBRARY_PATH
+	
+
+	
+Ctrl+/ 		注释或取消注释所选中的行（可一次选中多行）
+Shift+tab	使选中的行向前移动4格（可一次选中多行，适用于gedit）
+
+	
+	
+ /***************qt传递参数时，是自定义的类型就要注册*************************/
+    qRegisterMetaType<autonavigation::VideoImage::ConstPtr>("autonavigation::VideoImage::ConstPtr");
+    qRegisterMetaType<sensor_msgs::Joy::ConstPtr>("sensor_msgs::Joy::ConstPtr");
+    connect(&m_recvjoy,SIGNAL(Joy_readed(sensor_msgs::Joy::ConstPtr)),this,SLOT(Joy_data(sensor_msgs::Joy::ConstPtr)));
+
+	
+	this->setWindowState(Qt::WindowMaximized);	//设置窗体的初始状态
+	参数
+		Qt::WindowNoState		0x00000000		该窗口没有状态设置（处于正常状态）。
+		Qt::WindowMinimized		0x00000001		窗口被最小化（即图标化）。
+		Qt::WindowMaximized		0x00000002		窗口最大化，周围有一个框架。
+		Qt::WindowFullScreen	0x00000004		窗口填充整个屏幕而没有任何框架围绕它。
+		Qt::WindowActive		0x00000008		窗口是活动窗口，即它具有键盘焦点。
+	
+	Qt全屏显示函数 window.showFullScreen()
+	Qt最大化显示函数 window.showMaximized()
+	Qt最小化显示函数 window.showMinimized()
+	Qt固定尺寸显示函数 window.resize(x,y)
+
+	
+	setMinimumSize(370, 150); setMaximumSize(370, 150); 此时窗口大小便被固定为（370,150）。
+	this->setFixedSize(this->size());	//窗口的最大化按钮将变得不可用
+		
+	1、setFocusPolicy（...）设置获得焦点的方式
+		Qt::TabFocus
+			通过Tab键获得焦点
+		Qt::ClickFocus
+			通过被单击获得焦点
+		Qt::StrongFocus
+			可通过上面两种方式获得焦点
+		Qt::NoFocus
+			不能通过上两种方式获得焦点(默认值),setFocus仍可使其获得焦点
+						
+	setAttribute(Qt::WA_TranslucentBackground, true);	// 背景透明
+	this->setWindowIcon(QIcon(":/new/5.png"));			设置执行文件图标
+	
+	setWindowFlags(Qt::CustomizeWindowHint）;		//设置窗口标题栏自定义,标题栏也没有 按钮也没有 在那里出现就站在那里不到，
+	setWindowFlags(Qt::SplashScreen);				也不能移动和拖到，任务栏右击什么也没有，任务栏窗口名也没有，但是可以从任务管理器里关闭
+	setWindowFlags（Qt::WindowMinimizeButtonHint）;	//设置窗口的标题栏只有最小化的按钮
+	setWindowFlags(Qt::WindowMaximizeButtonHint);	//设置窗口的标题栏只有最大化的按钮
+	setWindowFlags( Qt::WindowCloseButtonHint ）;	//设置窗口的标题栏只有关闭的按钮
+	setWindowFlags(Qt::WindowTitleHint);			//设置窗口的标题栏只有关闭的按钮
+	setWindowFlags(Qt::WindowSystemMenuHint);		//设置窗口的标题栏只有关闭的按钮
+	setWindowFlags（Qt::WindowStaysOnTopHint);		//设置窗体一直置顶，并且不会抢焦点
+	this->setWindowFlags(this->windowFlags()）;		//设置窗口为QT的默认属性
+	this->setWindowFlags（Qt::FramelessWindowHint)）;//设置窗体无边框，不可拖动拖拽拉伸
+	this->setWindowModality(Qt::WindowModal); 		//设置窗体为模态
+	setWindowFlags(Qt::WindowContextHelpButtonHint);//像对话框一样，有个问号和关闭按钮
+	setWindowFlags(Qt::SubWindow);					//窗口没有按钮但是有标题栏 任务里什么也看不到
+	setWindowFlags(Qt::Desktop);					//没有显示在桌面也没在任务。但是任务管里器里还有
+	setWindowFlags(Qt::ToolTip);					//标题栏也没有 按钮也没有 在那里出现就站在那里不到，也不能移动和拖到，任务栏右击什么也没有，
+													任务栏窗口名也没有， 但是可以从任务管理器里关闭 顶层窗口 一直都是在最上面
+	setWindowFlags(Qt::Tool);						//有一个小小的关闭按钮，但是好像不能真正的关闭
+		
+background-color: rgb(136, 138, 133);
+	
+	setFocusPolicy(a)	设置控件的焦点，，a的参数有：
+		Qt::TabFocus	通过Tab键获得焦点
+		Qt::ClickFocus	通过被单击获得焦点
+		Qt::StrongFocus	可通过上面两种方式获得焦点
+		Qt::NoFocus		不能通过上两种方式获得焦点(默认值),setFocus仍可使其获得焦点
+	
+		
+	
+	setPlaceholderTex（）   输入框显示提示字，鼠标点击输入数字的时候提示字消失
+	setStatusTip（）        鼠标移动到控件上面时，下方状态栏显示提示字
+	setToolTip()			鼠标移动到控件上面时，鼠标下方显示提示字
+	
+	fontMetrics().width(QString s): 获取字符串s的总像素宽度
+	fontMetrics().height(): 获取字体的高度。
+
+	
+	setVisible(true/false);		使窗口可见或不可见
+
+	ui->ConnetBtn->text()==tr("连接")   点击连接按钮
+
+	setEnabled()		括号里为true时，激活按钮，按钮为亮色，此时如果setClickable
+						为true，则可点击， 为false时，按钮为灰色，不可点击
+
+	setClickable()		括号里为true时，按钮可以点击，为false时，按钮不可点击（如
+						果	此时setEnable为true，按钮时亮色）
+					
+	ui->label->setPixmap(QPixmap::fromImage(image));			设置控件背景图片
+
+	QPixmap pixmap = QPixmap(":new/4.jpg").scaled(this->size());
+		QPalette palette(this->palette());
+		palette.setBrush(QPalette::Background, QBrush(pixmap));			给窗口添加背景图片
+		this->setPalette(palette);
+		
+	QPalette palette;
+		palette.setBrush(this->backgroundRole(), Qt::gray);				改变窗口背景颜色
+		this->setPalette(palette);
+	
+	QPushButton *button;	
+	button->setStyleSheet("QPushButton{background-image: url(:/xxx.png)}");
+	button->setStyleSheet("QPushButton{border-image: url(:/xxx.png)}");			设置背景颜色、图片
+
+	void UDPClientWidget::paintEvent(QPaintEvent *e)			函数重载设置背景图片
+	{
+		QPainter painter(this);
+		painter.drawPixmap(0,0,this->width(),this->height(),QPixmap(":/new/1.jpeg"));
+	}
+
+
+
+
+	QMenu *file = menuBar()->addMenu(tr("&File"));	建立一个菜单栏
+	QToolBar *toolBar = addToolBar(tr("Open"));		建立一个工具栏
+
+
+
+QMessageBox类
+
+
+	QMessageBox messagebox(this);
+    messagebox.setWindowTitle(tr("save file !"));		设置标题
+    messagebox.setInformativeText(tr("Are you save ?"));	设置询问信息
+    messagebox.setDetailedText(tr("!!!"));				设置提示信息
+    messagebox.setStandardButtons(QMessageBox::Save | QMessageBox::Discard
+                                | QMessageBox::Cancel);			显示选择按钮
+    messagebox.setDefaultButton(QMessageBox::Save);		默认选择
+    
+    QMessageBox::about(this, tr("ok"), tr("Are you ok ?"));
+    QMessageBox::critical(this, tr("ok"), tr("Are you ok ?"),
+                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    QMessageBox::warning(this, tr("ok"), tr("Are you ok ?"),
+                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+    if(QMessageBox::Yes == QMessageBox::question(this, tr("ok"), tr("Are you ok ?"),
+                              QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes))
+    {
+        QMessageBox::information(this, tr("yes"), tr("ok"));
+    }
+    else
+        QMessageBox::information(this, tr("no"), tr("no"));
+
+
+
+
+
+Qt 时间相关 QDateTime类
+
+	QDateTime time_ = QDateTime::currentDateTime();
+    qDebug() << time_;
+    qDebug() << time_.toString("yyyy年MM月dd日 hh:mm:ss");										输出		2018年07月09日 15:06:18
+    qDebug() << time_.toTime_t();																输出		1531119978
+    qDebug() << time_.fromTime_t(time_.toTime_t()).toString("yyyy年MM月dd日 dddd hh:mm:ss");		输出		2018年07月09日 星期一 15:06:18
+
+	其中，format种可以使用的格式如下：
+
+	d 		表示天的数字，范围为 1~31，没有前置的0
+	dd 		表示天的数字，有前置的0，范围为01~31
+	ddd 	表示星期的简写，即Mon~Sun
+	dddd 	表示星期的全写，即Monday~Sunday
+	M 		表示月份的数字，没有前置的0，范围为1~12
+	MM 		表示月份的数字，有前置的0，范围为01~12
+	MMM 	表示月份的简写，范围为Jan~Dec
+	MMMM 	表示月份的全写，范围为January~December
+	yy 		表示两位数字的年份，即00~99
+	yyyy 	表示四位数字的年份，如2017
+
+
+	ui->lineEdit->setEchoMode(QLineEdit::Password); //设置为密码类型显示
+
+
+
+
+QT上 调试输出信息在终端上显示的方法：
+
+	  1  在.pro文件中添加： CONFIG += console
+
+	  2  选择：项目 -> 运行，勾选【Run in terminal】（在终端运行）选项。
+	  
+	  
+	  DESTDIR += 路径			在QT.pro文件加上，运行时可在相应路径下生成可执行文件
+
+
+
+
+
+
+qThread.h
+
+	属性 		返回值 			函数体 								功能
+	static 		QThread * 	QThread::currentThread() 	    	返回当前线程的指针，静态函数。
+			
+	static 		Qt::HANDLE 	QThread::currentThreadId() 	    	返回当前线程的句柄，静态函数
+			
+	static 		bool 		QThread::isFinished() const 		如果线程执行结束，返回true，否则返回false
+			
+	static 		bool 		QThread::isRunning() const 			如果当前线程在运行中，返回true，否则返回false
+			
+	static 		int 		QThread::idealThreadCount() 	    返回理理想状态下该系统支持的线程的数量。如果无发现检测到处理器的核数，返回值为-1
+			
+	protected 	int 		exec() 	    						使线程进入事件循环状态，并且处于wait状态，直到调用exit()函数使其退出。
+																退出时返回值是调用exit()函数时的输入参数。如果调用quit()函数，其退出的返回值为0.
+																该函数一般在run()函数中调用，使线程进入事件循环处理状态。
+			
+	protected 	void 		exit(int returnCode = 0) 	    	告知线程从事件循环状态退出，并且返回returnCode的值。一般说来，返回0表示成功退出，
+																返回非0值表示遇到错误。调用该函数后，线程不会再进行事件处理，除非再次调用exec()函数。
+																如果当前线程不处于执行状态，那么下次调用exec()也会直接返回
+			
+	private signal 	void 	finished() 	    					在线程执行完毕前发出该信号，当发出该信号时，意味着线程早已经退出了事件循环处理状态，
+																即不再处理除了延迟删除事件(deferred deletion)之外的任何事件。
+																可以把该信号和QObject::deleteLater()连接起来用来删除线程中的对象。如果强制
+																使用terminate()函数来结束线程，那么将无法得知finish()信号的发送线程。另外，
+																这是一个私有信号，所以用户无法发出这个信号。
+			
+	static 		bool 		QThread::isInterruptionRequested() const 	    返回当前线程上运行的任务是否可以停止，可以通过requestInterruption()来
+																进行中断查询。该函数可以使得长时间运行的任务彻底停止，永远不要检查该函数的返回值是否是安全的。
+																但是进行长时间任务时提倡有规律的使用该方法。但是不要频繁使用该方法避免线程切换的开销。
+			
+	static 		int 		QThread::loopLevel() const 	    	该函数返回当前事件循环的层级，但是该函数只能在线程内部调用。
+			
+	static 		void 		QThread::msleep(unsigned long msecs) 	    强制线程休息msecs毫秒
+			
+	static 		void 		QThread::usleep(unsigned long usecs) 	    强制线程休息usecs微秒
+			
+	static 		void 		QThread::msleep(unsigned long secs) 	    强制线程休息secs秒
+	virtual protected 	void 	QThread::run() 	    			该函数是线程运行的起始点。调用start()函数之后，新创建的函数调用该函数，默认
+																的QThread简单的调用exec()进入事件循环机制。我们可以重载这个函数来实现更高级的线程
+																管理方式。从该函数返回将结束线程。
+			
+	static 		void 		QThread::setPriority(Priority priority) 	    该函数设置线程运行的优先级，如果线程并没有处于运行状态，该函数什么也不做。
+																			可以通过调用start()来指定一个优先级来启动线程。优先级的效果依赖于操作系统的调度方式，
+																			尤其是在不支持优先级的操作系统上，优先级设置会被忽略。
+			
+	slot 		void 		QThread::quit() 	    			告诉线程的事件循环退出并且返回0值，相当于调用QThread::exit(0)。
+																如果线程没有事件循环，这个函数则什么也不做。
+			
+	virtual protected 	void 	QThread::setStackSize(uint stackSize) 	    设置线程堆栈的最大值，如果设置的值大于0，那么就会将堆栈最大值设置为
+																			当前数值。否则，线程堆栈的最大值由操作系统来决定。警告：大部分操作系统都
+																			会自己设置线程堆栈的最大最小值，如果设置的堆栈大小超出范围，线程则不能启动。
+			
+	static protected 	void 	QThread::setTerminationEnabled(bool enabled = true) 	
+			
+	slot 		void 		QThread::start(Priority priority = InheritPriority) 	    通过调用run()函数启动线程。操作系统会根据优先级来调度线程。
+																						如果线程已经处于运行状态，该函数什么也不做。优先级设置依赖于
+																						操作系统的线程调度方式。
+			
+	signal 		void 		QThread::started() 	    			线程开始执行时发出该信号，发出时间在run()函数调用之前。注意：这是一个私有信号，
+																因此只能由线程发出，用户不能发出该信号。
+			
+	slot 		void 		QThread::terminate() 	    		终止当前线程。线程或许不会立即被终止，依赖于线程的调度策略。一般情况下，
+																调用该函数之后再调用QThread::wait()来确保线程结束。该线程终止后，等待该线程
+																的其他线程将被唤醒。警告：该函数比较危险，不推荐这样做。线程可能在任何代码处终止。
+																或许在修改数据时被终止，线程结束后自己不能去做清理工作。
+			
+	static 		bool 		QThread::wait(unsigned long time = ULONG_MAX) 	    阻塞当前的进程，直到满足如下两个条件之一： 1.相关的线程完成其任务，
+																				然后如果线程已经结束，则该函数返回true，如果线程没有启动，则该函数也会返回true。
+																				 2. 经过了特定长度的时间，如果时间是ULONG_MAX（默认值），那么wait()函数几乎不会
+																				 超时。（即该函数必须从run()函数返回）如果wait函数超时，那么该函数会返回false。
+			
+	static 		void 		QThread::yieldCurrentThread() 		将当前线程的执行权让给别的可执行线程。至于让给哪一个可执行线程，那就是操作系统的事情了。
+
+	使用技巧
+	  1  一般调用quit()函数之后可以紧接着调用wait()函数确保线程退出。
+	  2  sleep()等让线程休眠的函数不需要调用，因为Qt中线程是事件驱动机制。但是如果是继承的QTHread类，在run()函数中使用了无限循环的方式，
+	  可以考虑msleep()函数来使线程休息一段时间，一般为1毫秒。
+  
+
+
+Qt 多项目之间的调用
+	在.pro文件中添加项目名
+		TEMPLATE = subdirs    //创建一个用于构建目标子目录的Makefile，子目录使用SUBDIRS变量指定
+
+		SUBDIRS += \
+		Driving \
+		ShowImage \
+		UDPSender \
+		WayPoint \
+		BCManager11		//第一个运行的程序放最后
+
+		CONFIG += ordered   //使用subdirs模板时，此选项指定应该按照目录列表的顺序处理它们
+		
+	QProcess
+	可用于完成启动外部程序，并与之交互通信。
+	一、启动外部程序的两种方式
+	　　1）一体式：void QProcess::start(const QString & program,const QStringList &arguments,OpenMode mode = ReadWrite)
+	　　　　外部程序启动后，将随主程序的退出而退出。
+	　　2）分离式：void QProcess::startDetached(const QString & program,const QStringList & arguments,const QString&workingDirectory=QString(),qint64 *pid =0)
+	　　　　外部程序启动后，当主程序退出时并不退出，而是继续运行。
+
+
+
+//连续从资源文件里面加载图片
+	QString path = ":/new/%1";
+    for(int x=0;x!=4;x++)
+    {
+        for(int y=0;y!=4;y++)
+        {
+            static int a=0;
+            QLabel *l1 = new QLabel;
+            QMovie *movie = new QMovie(path.arg(a+1));
+            movie->setScaledSize(QSize(46,46));
+            movie->start();
+            l1->setMovie(movie);
+            tablewidget->setCellWidget(x,y,l1);
+            a += 1;
+        }
+    }
+    
+    
+    
+    /****************************读取配置文件********************************/
+void Rtmp_demo::readSettings()
+{
+    QSettings settings(tr("Config"),QSettings::IniFormat);
+
+    int a=0;
+    QString num = "TV_Name/%1";
+    QString addr = "Rtmp_Addr/%1";
+    while(1)
+    {
+        if(settings.value(num.arg(a+1)).toString().isEmpty())
+            break;
+        ui->comboBox->addItem(tr(settings.value(num.arg(a+1)).toString().toLatin1().data()));
+        a++;
+    }
+    a=0;
+    while(1)
+    {
+        if(settings.value(addr.arg(a+1)).toString().isEmpty())
+            break;
+        ui->rtmp_addr->addItem(tr(settings.value(addr.arg(a+1)).toString().toLatin1().data()));
+        a++;
+    }
+}
+
+/****************************写入配置文件********************************/
+void Rtmp_demo::writeSettings()
+{
+    QSettings settings(tr("Config"),QSettings::IniFormat);
+    settings.setIniCodec("UTF-8"); //支持中文
+
+    int a=0;
+    QString num = "%1";
+    settings.beginGroup("TV_Name");
+    while(1)
+    {
+        if(ui->comboBox->itemText(a+1).isEmpty())
+            break;
+        settings.setValue(num.arg(a+1),ui->comboBox->itemText(a+1));
+        a++;
+    }
+    settings.endGroup();
+    a=0;
+    settings.beginGroup("Rtmp_Addr");
+    while(1)
+    {
+        if(ui->rtmp_addr->itemText(a+1).isEmpty())
+            break;
+        settings.setValue(num.arg(a+1),ui->rtmp_addr->itemText(a+1));
+        a++;
+    }
+    settings.endGroup();
+}
+
+
+
+当qt程序中用到ros时，需要在~/.profile中加入ros路径 source /opt/ros/indigo/setup.bash 否则只能在终端上运行程序，双击打不开
+
+
+QT QWidget设置窗体透明度方法汇总
+
+1、设置窗体的背景色 
+在构造函数里添加代码，需要添加头文件qpalette或qgui 
+QPalette pal = palette(); 
+pal.setColor(QPalette::Background, QColor(0x00,0xff,0x00,0x00)); 
+setPalette(pal); 
+通过设置窗体的背景色来实现，将背景色设置为全透。 
+效果： 
+窗口整体透明，但窗口控件不透明，QLabel控件只是字显示，控件背景色透明； 
+窗体客户区完全透明。 
+2、使用函数setAttribute(Qt::WA_TranslucentBackground, true)； 
+同样在构造函数中，效果和第一种方法相同。 
+3、窗口及其上面的控件都半透明： 
+setWindowOpacity(0.7) 
+这个函数可以分10个等级调整透明度，配合QSlider控件可以做成控制条 
+效果：窗口及控件都半透明。 
+4.窗口整体不透明，局部透明： 
+在Paint事件中使用Clear模式绘图。 
+void TestWindow::paintEvent( QPaintEvent* ) 
+{ 
+QPainter p(this); 
+p.setCompositionMode( QPainter::CompositionMode_Clear ); 
+p.fillRect( 10, 10, 300, 300, Qt::SolidPattern ); 
+} 
+试验效果：绘制区域全透明。如果绘制区域有控件不会影响控件。 
+以上方法在windows vista 和ubuntu 9.10上均使用良好。
+
+
+
+
+
