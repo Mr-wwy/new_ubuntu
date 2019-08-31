@@ -1,0 +1,193 @@
+<!DOCTYPE html>  
+<html>  
+    <head>  
+        <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+        <title>Hello, World</title>  
+        <style type="text/css">  
+        html{height:100%}  
+        body{height:100%;margin:0px;padding:0px}  
+        #container{height:100%}  
+        </style>  
+      
+		<script type="text/javascript" src="http://api.map.baidu.com/getscript?v=2.0&ak=yunSkctp3o2aAodRCGvZU1CbfxgG86Sz"></script> 
+                <script type="text/javascript" src="./bmap_offline_demo/qwebchannel.js"></script>
+        
+    </head>  
+
+    <body>  
+        <div id="container"></div> 
+        <script type="text/javascript"> 
+
+/**************************需要先添加qwebchannel.js然后才能使用qt与js交互的函数**************************/
+
+
+/************************************初始化地图信息***************************************/
+/*      var outputPath = 'tiles/';    //地图瓦片所在的文件夹
+        var fromat = ".jpg";          //格式
+
+	var tileLayer = new BMap.TileLayer();
+	tileLayer.getTilesUrl = function (tileCoord, zoom) {
+	var x = tileCoord.x;
+	var y = tileCoord.y;
+	var url = outputPath + zoom + '/' + x + '/' + y + fromat;
+	return url;
+	}
+	var tileMapType = new BMap.MapType('tileMapType', tileLayer);
+*/
+	var map = new BMap.Map("container")
+
+	var point = new BMap.Point(116.404, 39.915);     // 创建点坐标  
+        var myIcon_beijing=new BMap.Icon("bmap_offline_demo/images/marker_red_sprite.png",new BMap.Size(33,33));
+        var myIcon_car=new BMap.Icon("bmap_offline_demo/images/rc_car.ico",new BMap.Size(35,35));
+        var marker_beijing = new BMap.Marker(point,{icon:myIcon_beijing});  // 创建标注
+        marker_beijing.setRotation(0);             //设置旋转角度
+        map.addOverlay(marker_beijing);              // 将标注添加到地图中
+
+        var label_beijing=new BMap.Label("北京欢迎您！",{offset:new BMap.Size(20,-10)});
+        marker_beijing.setLabel(label_beijing);
+        marker_beijing.setTitle("lng:"+116.404+" lat:"+39.915);
+
+	map.centerAndZoom(point, 6);                     // 初始化地图，设置中心点坐标和地图级别  
+	  
+	map.setCurrentCity("长沙");          // 设置地图显示的城市 此项是必须设置的
+	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+
+	//单击获取点击的经纬度
+	map.addEventListener("click",function(e){
+		alert(e.point.lng + "," + e.point.lat);
+                JsToQtMessage(e.point.lng + "," + e.point.lat);
+	});
+
+        //添加地图类型控件
+	map.addControl(new BMap.MapTypeControl({
+		mapTypes:[
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+        ]}));
+
+	var top_left_control = new BMap.ScaleControl({anchor: BMAP_ANCHOR_TOP_LEFT});// 左上角，添加比例尺
+	var top_left_navigation = new BMap.NavigationControl();  //左上角，添加默认缩放平移控件
+	var top_right_navigation = new BMap.NavigationControl({anchor: BMAP_ANCHOR_TOP_RIGHT, type: BMAP_NAVIGATION_CONTROL_SMALL}); //右上角，仅 包含平移和缩放按钮
+	/*缩放控件type有四种类型:
+	BMAP_NAVIGATION_CONTROL_SMALL：仅包含平移和缩放按钮；BMAP_NAVIGATION_CONTROL_PAN:仅包含平移按钮；BMAP_NAVIGATION_CONTROL_ZOOM：仅包含缩放按钮*/
+
+
+	//添加控件和比例尺
+	function add_control(){
+		map.addControl(top_left_control);        
+		map.addControl(top_left_navigation);  
+		//map.addControl(top_right_navigation);    
+	};
+
+        add_control();
+
+
+/************************************初始化qt与js交互信息***************************************/
+
+var context;
+
+// 初始化
+function init()
+{
+    if (typeof qt != 'undefined')
+    {
+        new QWebChannel(qt.webChannelTransport, function(channel)
+        {
+            context = channel.objects.context;
+
+           //方法二：接收qt发送的消息--通过qt定义的消息
+           context.qtToJSMsgSignal.connect(function (msg1, msg2) {
+           //alert("接收到Qt发送的消息2：" + msg1+" "+msg2);  
+           map.clearOverlays(); 
+           var new_point = new BMap.Point(msg1,msg2);
+           var marker = new BMap.Marker(new_point);       // 创建标注
+           map.addOverlay(marker);                        // 将标注添加到地图中
+           });
+
+            
+        }
+        );
+    }
+    else
+    {
+        alert("qt对象获取失败！");
+    }
+}
+
+// 方法一：接收qt发送的消息--通过qt直接调用js中的函数         
+function JsrecvMsgWithStr(msg1, msg2)
+{
+    //alert("接收到Qt发送的消息1：" + msg1+" "+msg2);
+    map.clearOverlays(); 
+    var new_point = new BMap.Point(msg1,msg2);
+    var marker = new BMap.Marker(new_point);           // 创建标注
+    map.addOverlay(marker);                            // 将标注添加到地图中
+
+}
+
+function JsrecvMsgWithJsobject(msg)
+{
+
+    map.clearOverlays();//清除所有添加物体 
+
+/*     JsonObject              */
+    var obj = eval('(' + msg + ')');
+    alert(obj);
+    alert(obj.loginName);
+
+}
+
+function JsrecvMsgWithJsarray(msg)
+{
+      map.clearOverlays();//清除所有添加物体 
+
+/*     JsonObject+JsonArray              */
+      var obj = eval('(' + msg + ')');            //使用eval()解析Json数据，注意需要加入eval('(' + msg + ')')
+//    alert(obj);
+
+      for (var i = 0; i < obj.length; i++)
+               {
+               //obj[i]表示获得第i个json对象即JSONObject
+               //obj[i]通过.字段名称即可获得指定字段的值
+
+               var new_point = new BMap.Point(obj[i].lng,obj[i].lat);
+               //var myIcon=new BMap.Icon("http://lbsyun.baidu.com/jsdemo/img/fox.gif",new BMap.Size(300,150));//成功加载到图片
+               var myIcon=new BMap.Icon("bmap_offline_demo/images/Location.png",new BMap.Size(33,33));         //成功加载到图片
+               var marker = new BMap.Marker(new_point,{icon:myIcon});  // 创建标注
+               map.addOverlay(marker);              // 将标注添加到地图中
+
+               var label=new BMap.Label("id:"+obj[i].id,{offset:new BMap.Size(20,-10)});
+	       label.setStyle({
+			 color : "red",
+			 fontSize : "12px",
+			 height : "20px",
+			 lineHeight : "20px",
+			 fontFamily:"微软雅黑"
+		 });
+               marker.setLabel(label);
+               }
+}
+
+// 向qt发送消息--调用qt对象中的函数
+function JsToQtMessage(msg)
+{
+    if(typeof context == 'undefined')
+    {
+        alert("context对象获取失败！");
+    }
+    else
+    {
+        context.recvFromJsMsgGPS(msg);           //调用qt对象中的函数
+    }
+}
+
+
+init();
+
+       
+        </script>  
+    </body>  
+</html>
+
+
